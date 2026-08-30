@@ -6,7 +6,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import {
   ArrowLeft, BookOpen, Bookmark, Check, ChevronLeft, CircleHelp,
   ClipboardCheck, Clock3, FileText, HeartPulse, Home as HomeIcon, Lightbulb,
-  ListFilter, Menu, PlayCircle, Search, Star, Stethoscope, Target, X,
+  ListFilter, PlayCircle, Search, Star, Stethoscope, Target, X,
 } from 'lucide-react';
 import { Link, Route, Switch, useLocation, useParams, Router as WouterRouter } from 'wouter';
 
@@ -138,29 +138,22 @@ function useStudyState() {
 }
 
 function Shell({ children }: { children: ReactNode }) {
-  const [location] = useLocation();
   return <div className="app-shell">
     <header className="sticky top-0 z-30 border-b border-[#E5EAF0] bg-white">
-      <div className="mx-auto flex h-[74px] max-w-[1240px] items-center justify-between px-5 lg:px-8">
-        <Link href="/" className="group flex items-center gap-3" data-testid="link-brand">
-          <span className="brand-badge shrink-0" style={{ width: '42px', height: '42px', minWidth: '42px', borderRadius: '12px', background: '#0F2942', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(15, 41, 66, 0.15)' }} aria-hidden="true">
-            <svg viewBox="0 0 100 100" width="30" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M 50 34 C 42 22, 22 20, 14 30 C 22 36, 36 37, 48 38 Z" fill="#FFFFFF" />
-              <path d="M 50 34 C 58 22, 78 20, 86 30 C 78 36, 64 37, 52 38 Z" fill="#FFFFFF" />
-              <rect x="48" y="24" width="4" height="62" rx="2" fill="#FFFFFF" />
-              <circle cx="50" cy="22" r="5" fill="#FFFFFF" />
-              <path d="M 38 42 C 34 46, 36 52, 50 50 C 64 48, 66 58, 50 62 C 34 66, 36 74, 50 72 C 60 70, 64 76, 50 82" stroke="#FFFFFF" strokeWidth="3" strokeLinecap="round" fill="none" />
-              <path d="M 62 42 C 66 46, 64 52, 50 50 C 36 48, 34 58, 50 62 C 66 66, 64 74, 50 72 C 40 70, 36 76, 50 82" stroke="#FFFFFF" strokeWidth="3" strokeLinecap="round" fill="none" />
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '8px 16px', direction: 'ltr' }}>
+        <button type="button" style={{ background: 'none', border: 'none', fontSize: '24px', color: '#0F2942', cursor: 'pointer', lineHeight: 1 }} data-testid="button-mobile-menu" aria-label="فتح القائمة">☰</button>
+        <Link href="/" data-testid="link-brand" style={{ display: 'flex', alignItems: 'center', gap: '12px', direction: 'rtl' }}>
+          <div className="brand-badge" style={{ width: '46px', height: '46px', minWidth: '46px', borderRadius: '14px', background: '#0F2942', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 10px rgba(15, 41, 66, 0.2)' }} aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#FFFFFF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 2v20M8 5a4 4 0 0 1 8 0c0 3-8 5-8 8a4 4 0 0 0 8 0M8 5C4 5 2 7 2 9c0 3 4 4 10 4M16 5c4 0 6 2 6 4c0 3-4 4-10 4" />
             </svg>
-          </span>
-          <span className="brand-copy leading-none"><span className="brand-name block">ستاجير</span><span className="brand-subtitle mt-1 block">كُلّ مَا تَحْتَاجَهُ فِي الطِّبّ</span></span>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'right' }}>
+            <span className="brand-name" style={{ fontFamily: "'Aref Ruqaa', 'Amiri', serif", fontSize: '28px', fontWeight: 700, color: '#0F2942', lineHeight: 1.1 }}>ستاجير</span>
+            <span className="brand-subtitle" style={{ fontFamily: "'Amiri', serif", fontSize: '13px', color: '#5A6E85', fontWeight: 600, lineHeight: 1 }}>كُلّ مَا تَحْتَاجَهُ فِي الطِّبّ</span>
+          </div>
         </Link>
-        <nav className="hidden items-center gap-2 md:flex">
-          <Link href="/" data-testid="link-home" className={`rounded-xl px-4 py-2 text-sm font-bold transition ${location === '/' ? 'bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]' : 'text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))]'}`}><HomeIcon className="ml-2 inline-block" size={16} />الرئيسية</Link>
-          <Link href="/subjects" data-testid="link-subjects" className={`rounded-xl px-4 py-2 text-sm font-bold transition ${location === '/subjects' ? 'bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]' : 'text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))]'}`}><BookOpen className="ml-2 inline-block" size={16} />المواد</Link>
-          <span className="mr-3 flex items-center gap-2 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3 py-2 text-xs font-bold text-[hsl(var(--muted-foreground))]"><Target size={15} className="text-[hsl(var(--accent))]" />مراجعتك بيدك</span>
-        </nav>
-        <button type="button" className="rounded-xl p-2 text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))] md:hidden" data-testid="button-mobile-menu" aria-label="فتح القائمة"><Menu size={22} /></button>
+        <div style={{ width: '24px' }} aria-hidden="true" />
       </div>
     </header>
     <main>{children}</main>
