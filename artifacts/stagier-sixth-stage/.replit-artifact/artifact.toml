@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "ستاجير - المرحلة السادسة"
+description = "تطبيق ويب عربي سريع لطلاب المرحلة السادسة في الطب، يجمع المواد النظرية والسريرية والمواضيع التعليمية والـ MCQ وقارئ ملفات PDF في تجربة واحدة مهيأة للموبايل."
+version = "1.0.0"
+id = "artifacts/stagier-sixth-stage"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23648
+
+[services.development]
+run = "pnpm --filter @workspace/stagier-sixth-stage run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/stagier-sixth-stage", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/stagier-sixth-stage/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23648"
+BASE_PATH = "/"

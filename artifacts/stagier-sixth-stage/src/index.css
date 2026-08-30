@@ -1,0 +1,165 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;500;600;700&family=Tajawal:wght@400;500;700;800&display=swap');
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-card-border: hsl(var(--card-border));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-sidebar: hsl(var(--sidebar));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --font-sans: var(--app-font-sans);
+  --font-serif: var(--app-font-serif);
+  --font-mono: var(--app-font-mono);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --background: 36 33% 96%;
+  --foreground: 217 35% 18%;
+  --border: 35 22% 87%;
+  --input: 35 22% 83%;
+  --ring: 184 48% 38%;
+  --card: 40 40% 99%;
+  --card-foreground: 217 35% 18%;
+  --card-border: 35 25% 89%;
+  --sidebar: 213 42% 18%;
+  --sidebar-foreground: 40 30% 96%;
+  --sidebar-border: 213 34% 27%;
+  --sidebar-primary: 177 44% 54%;
+  --sidebar-primary-foreground: 213 42% 15%;
+  --sidebar-accent: 213 36% 24%;
+  --sidebar-accent-foreground: 40 30% 96%;
+  --primary: 184 48% 32%;
+  --primary-foreground: 40 40% 98%;
+  --secondary: 38 36% 90%;
+  --secondary-foreground: 217 35% 22%;
+  --muted: 38 25% 92%;
+  --muted-foreground: 215 16% 43%;
+  --accent: 29 85% 57%;
+  --accent-foreground: 30 39% 17%;
+  --destructive: 4 67% 49%;
+  --destructive-foreground: 40 40% 98%;
+  --radius: 1rem;
+  --app-font-sans: 'Tajawal', sans-serif;
+  --app-font-serif: 'Noto Kufi Arabic', sans-serif;
+  --app-font-mono: 'IBM Plex Mono', monospace;
+  --elevate-1: rgba(28, 48, 66, .05);
+  --elevate-2: rgba(28, 48, 66, .09);
+  --primary-border: hsl(var(--primary));
+  --secondary-border: hsl(var(--secondary));
+  --muted-border: hsl(var(--muted));
+  --accent-border: hsl(var(--accent));
+  --destructive-border: hsl(var(--destructive));
+}
+
+.dark {
+  --background: 215 33% 11%;
+  --foreground: 40 30% 94%;
+  --border: 215 23% 24%;
+  --input: 215 23% 29%;
+  --card: 215 30% 15%;
+  --card-foreground: 40 30% 94%;
+  --card-border: 215 23% 25%;
+  --sidebar: 215 37% 9%;
+  --sidebar-foreground: 40 30% 94%;
+  --sidebar-border: 215 24% 20%;
+  --sidebar-primary: 177 44% 54%;
+  --sidebar-primary-foreground: 215 37% 9%;
+  --sidebar-accent: 215 29% 18%;
+  --sidebar-accent-foreground: 40 30% 94%;
+  --primary: 177 44% 54%;
+  --primary-foreground: 215 37% 9%;
+  --secondary: 215 24% 22%;
+  --secondary-foreground: 40 30% 94%;
+  --muted: 215 24% 20%;
+  --muted-foreground: 215 15% 70%;
+  --accent: 31 88% 61%;
+  --accent-foreground: 30 39% 17%;
+  --destructive: 4 65% 57%;
+  --destructive-foreground: 40 30% 94%;
+}
+
+@layer base {
+  * { @apply border-border; }
+  html { direction: rtl; }
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    min-width: 320px;
+  }
+  button, input { font: inherit; }
+  button, a { -webkit-tap-highlight-color: transparent; }
+  :focus-visible { outline: 3px solid hsl(var(--accent)); outline-offset: 3px; }
+}
+
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { scrollbar-width: none; }
+}
+
+* { scrollbar-color: hsl(35 19% 76%) transparent; scrollbar-width: thin; }
+
+.app-shell {
+  min-height: 100dvh;
+  background:
+    radial-gradient(circle at 12% 0%, hsl(177 38% 92% / .44), transparent 27rem),
+    radial-gradient(circle at 95% 12%, hsl(31 73% 92% / .58), transparent 24rem),
+    hsl(var(--background));
+}
+.paper-grid {
+  background-image: linear-gradient(hsl(213 30% 22% / .035) 1px, transparent 1px), linear-gradient(90deg, hsl(213 30% 22% / .035) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+.display-font { font-family: var(--app-font-serif); }
+.ink-card { background: hsl(var(--card)); border: 1px solid hsl(var(--card-border)); box-shadow: 0 14px 35px hsl(213 30% 20% / .055); }
+.lift { transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.lift:hover { transform: translateY(-4px); box-shadow: 0 20px 38px hsl(213 30% 20% / .1); }
+.page-in { animation: pageIn .45s ease both; }
+.stagger > * { animation: pageIn .45s ease both; }
+.stagger > *:nth-child(2) { animation-delay: .05s; }
+.stagger > *:nth-child(3) { animation-delay: .1s; }
+.stagger > *:nth-child(4) { animation-delay: .15s; }
+.stagger > *:nth-child(5) { animation-delay: .2s; }
+.stagger > *:nth-child(6) { animation-delay: .25s; }
+.progress-bar { transition: width .5s ease; }
+.subject-line { height: 5px; border-radius: 5px 5px 0 0; }
+.selection-card { transition: transform .25s ease, background-color .25s ease, border-color .25s ease; }
+.selection-card:hover { transform: translateY(-5px); }
+@keyframes pageIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulseSoft { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+.skeleton { animation: pulseSoft 1.4s ease-in-out infinite; background: hsl(var(--muted)); }
+
+@media (max-width: 767px) {
+  .app-shell { padding-bottom: 78px; }
+  .mobile-bottom-nav { display: flex; }
+}
+@media (min-width: 768px) {
+  .mobile-bottom-nav { display: none; }
+}

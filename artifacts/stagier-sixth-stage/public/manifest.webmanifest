@@ -1,0 +1,12 @@
+{
+  "name": "ستاجير - المرحلة السادسة",
+  "short_name": "ستاجير",
+  "description": "دليلك النظري والسريري لطلاب الطب في المرحلة السادسة",
+  "dir": "rtl",
+  "lang": "ar",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8f5ee",
+  "theme_color": "#183b56",
+  "icons": []
+}
