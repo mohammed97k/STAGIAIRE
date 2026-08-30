@@ -129,11 +129,11 @@ function useStudyState() {
 function Shell({ children }: { children: ReactNode }) {
   const [location] = useLocation();
   return <div className="app-shell">
-    <header className="sticky top-0 z-30 border-b border-[hsl(var(--border)/.75)] bg-[hsl(var(--background)/.88)] backdrop-blur-lg">
+    <header className="sticky top-0 z-30 border-b border-[#E5EAF0] bg-white">
       <div className="mx-auto flex h-[74px] max-w-[1240px] items-center justify-between px-5 lg:px-8">
         <Link href="/" className="group flex items-center gap-3" data-testid="link-brand">
-          <img src={`${import.meta.env.BASE_URL}stagier-logo.svg`} alt="شعار ستاجير" className="brand-logo h-12 w-12 rounded-2xl shadow-lg shadow-[hsl(213_42%_18%/.14)]" data-testid="img-brand-logo" />
-          <span className="leading-none"><span className="brand-name block text-[18px] font-extrabold text-[hsl(var(--foreground))]">ستاجير</span><span className="brand-subtitle mt-1 block text-[10px] font-medium text-[hsl(var(--muted-foreground))]">كُلّ مَا تَحْتَاجَه في الطِّب</span></span>
+          <span className="brand-badge flex h-[45px] w-[45px] shrink-0 items-center justify-center rounded-full bg-[#0F2942] text-white shadow-sm" aria-hidden="true"><Stethoscope size={23} strokeWidth={2.1} /></span>
+          <span className="brand-copy leading-none"><span className="brand-name block text-[18px] font-bold">ستاجير</span><span className="brand-subtitle mt-1 block text-[10px] font-medium">كُلّ مَا تَحْتَاجَه في الطِّب</span></span>
         </Link>
         <nav className="hidden items-center gap-2 md:flex">
           <Link href="/" data-testid="link-home" className={`rounded-xl px-4 py-2 text-sm font-bold transition ${location === '/' ? 'bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]' : 'text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))]'}`}><HomeIcon className="ml-2 inline-block" size={16} />الرئيسية</Link>

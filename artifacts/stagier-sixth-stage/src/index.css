@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Aref+Ruqaa+Ink:wght@400;700&family=Amiri:wght@400;700&family=Noto+Kufi+Arabic:wght@400;500;600;700&family=Tajawal:wght@400;500;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Noto+Kufi+Arabic:wght@400;500;600;700&family=Tajawal:wght@400;500;700;800&display=swap');
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @plugin "@tailwindcss/typography";
@@ -138,14 +138,17 @@
   background-size: 28px 28px;
 }
 .display-font { font-family: var(--app-font-serif); }
+.brand-copy { color: #0f2942; font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif; }
+.brand-badge { border: 1px solid rgba(15, 41, 66, .08); }
 .brand-name,
 .brand-subtitle {
-  font-family: 'Aref Ruqaa Ink', 'Amiri', serif;
-  font-weight: 700;
+  color: #0f2942;
+  font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
+  letter-spacing: 0;
 }
-.brand-name { font-size: 1.35rem; letter-spacing: 0; line-height: 1; }
-.brand-subtitle { direction: rtl; letter-spacing: 0; line-height: 1.25; }
-.brand-logo { display: block; object-fit: cover; }
+.brand-name { line-height: 1; }
+.brand-subtitle { direction: rtl; line-height: 1.25; }
+.brand-logo { display: block; max-width: 220px; object-fit: contain; }
 .subject-english,
 .topic-english {
   display: block;

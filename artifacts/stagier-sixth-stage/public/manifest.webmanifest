@@ -8,12 +8,5 @@
   "display": "standalone",
   "background_color": "#f8f5ee",
   "theme_color": "#183b56",
-  "icons": [
-    {
-      "src": "/stagier-logo.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    }
-  ]
+  "icons": []
 }
