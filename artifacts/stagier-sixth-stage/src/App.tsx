@@ -143,8 +143,17 @@ function Shell({ children }: { children: ReactNode }) {
     <header className="sticky top-0 z-30 border-b border-[#E5EAF0] bg-white">
       <div className="mx-auto flex h-[74px] max-w-[1240px] items-center justify-between px-5 lg:px-8">
         <Link href="/" className="group flex items-center gap-3" data-testid="link-brand">
-          <span className="brand-badge flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-full bg-[#0F2942] text-white shadow-sm" aria-hidden="true"><Stethoscope size={23} strokeWidth={2.1} /></span>
-          <span className="brand-copy leading-none"><span className="brand-name block">ستاجير</span><span className="brand-subtitle mt-1 block">كُلّ مَا تَحْتَاجَه في الطِّب · المرحلة السادسة</span></span>
+          <span className="brand-badge shrink-0" style={{ width: '42px', height: '42px', minWidth: '42px', borderRadius: '12px', background: '#0F2942', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(15, 41, 66, 0.15)' }} aria-hidden="true">
+            <svg viewBox="0 0 100 100" width="30" height="30" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M 50 34 C 42 22, 22 20, 14 30 C 22 36, 36 37, 48 38 Z" fill="#FFFFFF" />
+              <path d="M 50 34 C 58 22, 78 20, 86 30 C 78 36, 64 37, 52 38 Z" fill="#FFFFFF" />
+              <rect x="48" y="24" width="4" height="62" rx="2" fill="#FFFFFF" />
+              <circle cx="50" cy="22" r="5" fill="#FFFFFF" />
+              <path d="M 38 42 C 34 46, 36 52, 50 50 C 64 48, 66 58, 50 62 C 34 66, 36 74, 50 72 C 60 70, 64 76, 50 82" stroke="#FFFFFF" strokeWidth="3" strokeLinecap="round" fill="none" />
+              <path d="M 62 42 C 66 46, 64 52, 50 50 C 36 48, 34 58, 50 62 C 66 66, 64 74, 50 72 C 40 70, 36 76, 50 82" stroke="#FFFFFF" strokeWidth="3" strokeLinecap="round" fill="none" />
+            </svg>
+          </span>
+          <span className="brand-copy leading-none"><span className="brand-name block">ستاجير</span><span className="brand-subtitle mt-1 block">كُلّ مَا تَحْتَاجَهُ فِي الطِّبّ</span></span>
         </Link>
         <nav className="hidden items-center gap-2 md:flex">
           <Link href="/" data-testid="link-home" className={`rounded-xl px-4 py-2 text-sm font-bold transition ${location === '/' ? 'bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]' : 'text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))]'}`}><HomeIcon className="ml-2 inline-block" size={16} />الرئيسية</Link>
