@@ -143,11 +143,7 @@ function Shell({ children }: { children: ReactNode }) {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '8px 16px', direction: 'ltr' }}>
         <button type="button" style={{ background: 'none', border: 'none', fontSize: '24px', color: '#0F2942', cursor: 'pointer', lineHeight: 1 }} data-testid="button-mobile-menu" aria-label="فتح القائمة">☰</button>
         <Link href="/" data-testid="link-brand" style={{ display: 'flex', alignItems: 'center', gap: '12px', direction: 'rtl' }}>
-          <div className="brand-badge" style={{ width: '46px', height: '46px', minWidth: '46px', borderRadius: '14px', background: '#0F2942', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 10px rgba(15, 41, 66, 0.2)' }} aria-hidden="true">
-            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#FFFFFF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 2v20M8 5a4 4 0 0 1 8 0c0 3-8 5-8 8a4 4 0 0 0 8 0M8 5C4 5 2 7 2 9c0 3 4 4 10 4M16 5c4 0 6 2 6 4c0 3-4 4-10 4" />
-            </svg>
-          </div>
+          <img className="brand-badge" src="/logo.png" alt="شعار ستاجير" style={{ width: '46px', height: '46px', minWidth: '46px', borderRadius: '14px', objectFit: 'cover', display: 'block', boxShadow: '0 4px 10px rgba(15, 41, 66, 0.2)' }} data-testid="img-brand-logo" />
           <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'right' }}>
             <span className="brand-name" style={{ fontFamily: "'Aref Ruqaa', 'Amiri', serif", fontSize: '28px', fontWeight: 700, color: '#0F2942', lineHeight: 1.1 }}>ستاجير</span>
             <span className="brand-subtitle" style={{ fontFamily: "'Amiri', serif", fontSize: '13px', color: '#5A6E85', fontWeight: 600, lineHeight: 1 }}>كُلّ مَا تَحْتَاجَهُ فِي الطِّبّ</span>
