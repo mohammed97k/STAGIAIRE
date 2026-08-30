@@ -1,12 +1,19 @@
 {
-  "name": "ستاجير - المرحلة السادسة",
+  "name": "ستاجير - دليلك النظري والسريري · المرحلة السادسة",
   "short_name": "ستاجير",
-  "description": "دليلك النظري والسريري لطلاب الطب في المرحلة السادسة",
+  "description": "كُلّ مَا تَحْتَاجَه في الطِّب",
   "dir": "rtl",
   "lang": "ar",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f8f5ee",
   "theme_color": "#183b56",
-  "icons": []
+  "icons": [
+    {
+      "src": "/stagier-logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
 }
