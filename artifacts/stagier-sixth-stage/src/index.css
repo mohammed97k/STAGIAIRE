@@ -168,6 +168,20 @@
   line-height: 1.5;
 }
 .topic-english { font-size: 1.05rem; }
+.topic-group-label {
+  margin: 1.5rem .25rem .65rem;
+  color: hsl(var(--primary));
+  font-family: var(--app-font-sans);
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.pdf-placeholder {
+  background:
+    linear-gradient(135deg, hsl(213 42% 18%), hsl(213 42% 22%)),
+    repeating-linear-gradient(0deg, transparent 0 28px, hsl(0 0% 100% / .025) 29px);
+}
 .subject-emoji {
   display: inline-flex;
   align-items: center;

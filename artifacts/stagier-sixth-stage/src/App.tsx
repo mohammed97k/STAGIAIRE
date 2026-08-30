@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { Fragment, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
@@ -13,86 +13,97 @@ import { Link, Route, Switch, useLocation, useParams, Router as WouterRouter } f
 type Accent = 'navy' | 'green' | 'orange' | 'purple';
 type Branch = 'theory' | 'clinical';
 type Tab = 'lectures' | 'explanation' | 'summaries' | 'hints' | 'mcqs' | 'review';
-type Topic = { id: string; title: string; en: string; count: number; duration: string; tag?: string };
+type Topic = { id: string; title: string; en: string; count: number; duration: string; tag?: string; group?: string };
 type Subject = { id: string; title: string; english: string; accent: Accent; icon: string; description: string; topics: Record<Branch, Topic[]> };
+
+const topic = (id: string, en: string, title: string, group?: string): Topic => ({
+  id, en, title, count: 12, duration: 'ساعتان', ...(group ? { group } : {}),
+});
+
+const internalMedicineTopics = [
+  topic('cardiology', 'Cardiology', 'أمراض القلب'),
+  topic('respiratory', 'Respiratory Medicine', 'الأمراض التنفسية'),
+  topic('gastroenterology', 'Gastroenterology', 'أمراض الجهاز الهضمي'),
+  topic('endocrinology', 'Endocrinology', 'الغدد الصماء'),
+  topic('nephrology', 'Nephrology', 'أمراض الكلى'),
+  topic('infectious-diseases', 'Infectious Diseases', 'الأمراض الانتقالية'),
+  topic('hematology', 'Hematology', 'أمراض الدم'),
+  topic('rheumatology', 'Rheumatology', 'أمراض المفاصل والروماتيزم'),
+  topic('neurology', 'Neurology', 'الأمراض العصبية'),
+];
+
+const surgeryTopics = [
+  topic('general-surgery', 'General Surgery', 'الجراحة العامة'),
+  topic('gastrointestinal-surgery', 'Gastrointestinal Surgery', 'جراحة الجهاز الهضمي'),
+  topic('hepatobiliary-pancreatic-surgery', 'Hepatobiliary & Pancreatic Surgery', 'جراحة الكبد والطرق الصفراوية والبنكرياس'),
+  topic('colorectal-surgery', 'Colorectal Surgery', 'جراحة القولون والمستقيم'),
+  topic('breast-surgery', 'Breast Surgery', 'جراحة الثدي'),
+  topic('endocrine-surgery', 'Endocrine Surgery', 'جراحة الغدد الصماء'),
+  topic('vascular-surgery', 'Vascular Surgery', 'جراحة الأوعية الدموية'),
+  topic('urology', 'Urology', 'جراحة المسالك البولية'),
+  topic('orthopedic-surgery', 'Orthopedic Surgery', 'جراحة العظام'),
+  topic('neurosurgery', 'Neurosurgery', 'جراحة الأعصاب'),
+  topic('cardiothoracic-surgery', 'Cardiothoracic Surgery', 'جراحة القلب والصدر'),
+  topic('plastic-reconstructive-surgery', 'Plastic & Reconstructive Surgery', 'الجراحة التجميلية والترميمية'),
+  topic('pediatric-surgery', 'Pediatric Surgery', 'جراحة الأطفال'),
+  topic('anesthesia', 'Anesthesia', 'التخدير'),
+];
+
+const pediatricsTopics = [
+  topic('neonatology', 'Neonatology', 'حديثو الولادة'),
+  topic('growth-development', 'Growth & Development', 'النمو والتطور'),
+  topic('pediatric-infectious-diseases', 'Pediatric Infectious Diseases', 'الأمراض الانتقالية عند الأطفال'),
+  topic('pediatric-respiratory', 'Pediatric Respiratory', 'الجهاز التنفسي للأطفال'),
+  topic('pediatric-gastroenterology', 'Pediatric Gastroenterology', 'أمراض الجهاز الهضمي للأطفال'),
+  topic('pediatric-cardiology', 'Pediatric Cardiology', 'أمراض القلب عند الأطفال'),
+  topic('pediatric-neurology', 'Pediatric Neurology', 'الأمراض العصبية عند الأطفال'),
+  topic('pediatric-nephrology', 'Pediatric Nephrology', 'أمراض الكلى عند الأطفال'),
+  topic('pediatric-hematology', 'Pediatric Hematology', 'أمراض الدم عند الأطفال'),
+  topic('pediatric-endocrinology', 'Pediatric Endocrinology', 'الغدد الصماء عند الأطفال'),
+  topic('pediatric-rheumatology', 'Pediatric Rheumatology', 'أمراض الروماتيزم عند الأطفال'),
+  topic('pediatric-emergency-medicine', 'Pediatric Emergency Medicine', 'طب طوارئ الأطفال'),
+  topic('pediatric-genetics', 'Pediatric Genetics', 'الوراثة عند الأطفال'),
+];
+
+const obstetricsGynecologyTopics = [
+  topic('antenatal-care', 'Antenatal Care', 'رعاية الحوامل', 'Obstetrics'),
+  topic('normal-labour', 'Normal Labour', 'المخاض الطبيعي', 'Obstetrics'),
+  topic('abnormal-labour', 'Abnormal Labour', 'المخاض غير الطبيعي', 'Obstetrics'),
+  topic('high-risk-pregnancy', 'High-Risk Pregnancy', 'الحمل عالي الخطورة', 'Obstetrics'),
+  topic('hypertensive-disorders-pregnancy', 'Hypertensive Disorders of Pregnancy', 'اضطرابات ارتفاع الضغط في الحمل', 'Obstetrics'),
+  topic('diabetes-in-pregnancy', 'Diabetes in Pregnancy', 'السكري في الحمل', 'Obstetrics'),
+  topic('obstetric-hemorrhage', 'Obstetric Hemorrhage', 'النزف التوليدي', 'Obstetrics'),
+  topic('general-gynecology', 'General Gynecology', 'أمراض النسائية العامة', 'Gynecology'),
+  topic('infertility', 'Infertility', 'العقم', 'Gynecology'),
+  topic('gynecological-oncology', 'Gynecological Oncology', 'أورام النسائية', 'Gynecology'),
+  topic('urogynecology', 'Urogynecology', 'أمراض المسالك البولية النسائية', 'Gynecology'),
+];
+
+const priorityTopicIds = new Set([
+  'cardiology', 'infectious-diseases', 'general-surgery', 'anesthesia',
+  'neonatology', 'pediatric-emergency-medicine', 'antenatal-care', 'obstetric-hemorrhage',
+]);
 
 const subjects: Subject[] = [
   {
     id: 'medicine', title: 'الباطنية', english: 'Internal Medicine', accent: 'navy', icon: '🫀',
     description: 'منهج سريري متكامل لفهم التشخيص والتدبير',
-    topics: {
-      theory: [
-        { id: 'cardiology', title: 'أمراض القلب', en: 'Cardiology', count: 18, duration: '4 ساعات', tag: 'أساسي' },
-        { id: 'respiratory', title: 'الأمراض التنفسية', en: 'Respiratory Medicine', count: 15, duration: '3 ساعات' },
-        { id: 'gastro', title: 'أمراض الجهاز الهضمي', en: 'Gastroenterology', count: 14, duration: '3 ساعات' },
-        { id: 'endocrine', title: 'الغدد الصماء', en: 'Endocrinology', count: 12, duration: 'ساعتان ونصف' },
-        { id: 'neurology', title: 'الأمراض العصبية', en: 'Neurology', count: 16, duration: '3 ساعات' },
-        { id: 'infectious', title: 'الأمراض الانتقالية', en: 'Infectious Diseases', count: 17, duration: '4 ساعات', tag: 'مهم' },
-      ],
-      clinical: [
-        { id: 'clinical-cardiology', title: 'فحص مريض القلب', en: 'Cardiovascular Examination', count: 9, duration: 'ساعة ونصف' },
-        { id: 'clinical-respiratory', title: 'فحص الجهاز التنفسي', en: 'Respiratory Examination', count: 8, duration: 'ساعة' },
-        { id: 'clinical-neuro', title: 'الفحص العصبي', en: 'Neurological Examination', count: 11, duration: 'ساعتان' },
-        { id: 'emergency', title: 'الطب الطارئ', en: 'Emergency Medicine', count: 14, duration: '3 ساعات', tag: 'مهم' },
-      ],
-    },
+    topics: { theory: internalMedicineTopics, clinical: internalMedicineTopics },
   },
   {
     id: 'surgery', title: 'الجراحة', english: 'Surgery', accent: 'green', icon: '🔪',
     description: 'خطوات عملية مرتبة من التقييم إلى غرفة العمليات',
-    topics: {
-      theory: [
-        { id: 'general-surgery', title: 'الجراحة العامة', en: 'General Surgery', count: 20, duration: '4 ساعات', tag: 'أساسي' },
-        { id: 'trauma', title: 'الإصابات والرضوض', en: 'Trauma & Critical Care', count: 16, duration: '3 ساعات', tag: 'مهم' },
-        { id: 'urology', title: 'جراحة المسالك البولية', en: 'Urology', count: 12, duration: 'ساعتان' },
-        { id: 'vascular', title: 'جراحة الأوعية', en: 'Vascular Surgery', count: 10, duration: 'ساعتان' },
-        { id: 'orthopedics', title: 'جراحة العظام', en: 'Orthopedics', count: 15, duration: '3 ساعات' },
-      ],
-      clinical: [
-        { id: 'acute-abdomen', title: 'البطن الحاد', en: 'Acute Abdomen', count: 10, duration: 'ساعتان', tag: 'مهم' },
-        { id: 'wound-care', title: 'العناية بالجروح', en: 'Wound Care', count: 7, duration: 'ساعة' },
-        { id: 'preop', title: 'التقييم قبل الجراحة', en: 'Pre-operative Assessment', count: 8, duration: 'ساعة ونصف' },
-        { id: 'postop', title: 'المتابعة بعد الجراحة', en: 'Post-operative Care', count: 8, duration: 'ساعة ونصف' },
-      ],
-    },
+    topics: { theory: surgeryTopics, clinical: surgeryTopics },
   },
   {
     id: 'pediatrics', title: 'طب الأطفال', english: 'Pediatrics', accent: 'orange', icon: '👶',
     description: 'مراجعة واضحة للنمو، الأمراض الشائعة، والإنعاش',
-    topics: {
-      theory: [
-        { id: 'neonatology', title: 'حديثو الولادة', en: 'Neonatology', count: 19, duration: '4 ساعات', tag: 'أساسي' },
-        { id: 'growth', title: 'النمو والتطور', en: 'Growth & Development', count: 11, duration: 'ساعتان' },
-        { id: 'pediatric-infections', title: 'أخماج الأطفال', en: 'Pediatric Infections', count: 15, duration: '3 ساعات' },
-        { id: 'pediatric-respiratory', title: 'الجهاز التنفسي للأطفال', en: 'Pediatric Respiratory', count: 14, duration: '3 ساعات' },
-        { id: 'nutrition', title: 'تغذية الأطفال', en: 'Pediatric Nutrition', count: 8, duration: 'ساعة ونصف' },
-      ],
-      clinical: [
-        { id: 'pediatric-emergency', title: 'طوارئ الأطفال', en: 'Pediatric Emergency', count: 13, duration: 'ساعتان ونصف', tag: 'مهم' },
-        { id: 'newborn-exam', title: 'فحص حديث الولادة', en: 'Newborn Examination', count: 8, duration: 'ساعة' },
-        { id: 'dehydration', title: 'الجفاف وسوء التغذية', en: 'Dehydration & Malnutrition', count: 9, duration: 'ساعة ونصف' },
-        { id: 'vaccination', title: 'التطعيمات', en: 'Immunization', count: 7, duration: 'ساعة' },
-      ],
-    },
+    topics: { theory: pediatricsTopics, clinical: pediatricsTopics },
   },
   {
     id: 'obgyn', title: 'النسائية والتوليد', english: 'Obstetrics & Gynecology', accent: 'purple', icon: '🤰',
     description: 'من رعاية الحمل إلى الحالات النسائية الشائعة',
-    topics: {
-      theory: [
-        { id: 'antenatal', title: 'رعاية الحوامل', en: 'Antenatal Care', count: 17, duration: '3 ساعات', tag: 'أساسي' },
-        { id: 'labor', title: 'المخاض والولادة', en: 'Labour & Delivery', count: 18, duration: '4 ساعات', tag: 'مهم' },
-        { id: 'high-risk', title: 'الحمل عالي الخطورة', en: 'High Risk Pregnancy', count: 15, duration: '3 ساعات' },
-        { id: 'gynecology', title: 'أمراض النسائية', en: 'General Gynecology', count: 16, duration: '3 ساعات' },
-        { id: 'oncology', title: 'أورام النسائية', en: 'Gynecologic Oncology', count: 10, duration: 'ساعتان' },
-      ],
-      clinical: [
-        { id: 'obstetric-exam', title: 'الفحص التوليدي', en: 'Obstetric Examination', count: 9, duration: 'ساعة ونصف' },
-        { id: 'ctg', title: 'تخطيط قلب الجنين', en: 'CTG Interpretation', count: 8, duration: 'ساعة' },
-        { id: 'gyne-exam', title: 'الفحص النسائي', en: 'Gynecologic Examination', count: 8, duration: 'ساعة ونصف' },
-        { id: 'obgyn-emergency', title: 'طوارئ النسائية والتوليد', en: 'Obstetric Emergencies', count: 12, duration: 'ساعتان ونصف', tag: 'مهم' },
-      ],
-    },
+    topics: { theory: obstetricsGynecologyTopics, clinical: obstetricsGynecologyTopics },
   },
 ];
 
@@ -187,7 +198,7 @@ function Home() {
 }
 
 function SubjectCard({ subject, state }: { subject: Subject; state: StudyState }) {
-  const all = [...subject.topics.theory, ...subject.topics.clinical];
+  const all = subject.topics.theory;
   const done = all.filter((topic) => state.completed.includes(`${subject.id}-${topic.id}`)).length;
   const colors = accentMap[subject.accent];
   return <Link href={`/subject/${subject.id}`} data-testid={`card-subject-${subject.id}`} className="ink-card subject-card lift group relative overflow-hidden rounded-2xl" style={{ borderLeftColor: colors.color }}>
@@ -202,9 +213,9 @@ function SubjectsPage() {
 
 function ReviewPage() {
   const { state } = useStudyState();
-  const savedTopics = subjects.flatMap((subject) => [...subject.topics.theory, ...subject.topics.clinical].map((topic) => ({ subject, topic, key: `${subject.id}-${topic.id}` }))).filter((item) => state.completed.includes(item.key) || state.favorites.includes(item.key));
+  const savedTopics = subjects.flatMap((subject) => subject.topics.theory.map((topic) => ({ subject, topic, key: `${subject.id}-${topic.id}` }))).filter((item) => state.completed.includes(item.key) || state.favorites.includes(item.key));
   const completedCount = state.completed.length;
-  return <Shell><div className="mx-auto max-w-[1040px] px-5 pb-16 pt-9 lg:px-8 lg:pt-14"><Breadcrumbs items={[{ title: 'مراجعتي' }]} /><div className="mb-8"><p className="mb-2 text-xs font-bold tracking-widest text-[hsl(var(--primary))]">مساحتك الشخصية</p><h1 className="display-font text-3xl font-bold">مراجعتك، كما تركتها.</h1><p className="mt-3 text-sm leading-7 text-[hsl(var(--muted-foreground))]">ستجد هنا الموضوعات التي حفظتها أو أنهيتها، لتعود إليها دون بحث.</p></div><div className="mb-8 grid gap-4 sm:grid-cols-3"><div className="ink-card rounded-2xl p-5"><span className="text-xs font-bold text-[hsl(var(--muted-foreground))]">مكتمل</span><strong className="display-font mt-2 block text-3xl text-[hsl(158_46%_35%)]">{completedCount}</strong></div><div className="ink-card rounded-2xl p-5"><span className="text-xs font-bold text-[hsl(var(--muted-foreground))]">محفوظ</span><strong className="display-font mt-2 block text-3xl text-[hsl(var(--accent))]">{state.favorites.length}</strong></div><div className="ink-card rounded-2xl p-5"><span className="text-xs font-bold text-[hsl(var(--muted-foreground))]">قيد المراجعة</span><strong className="display-font mt-2 block text-3xl text-[hsl(var(--primary))]">{Object.keys(state.topicProgress).length}</strong></div></div>{savedTopics.length === 0 ? <div className="ink-card rounded-2xl p-12 text-center"><Bookmark className="mx-auto mb-3 text-[hsl(var(--muted-foreground))]" size={29} /><h2 className="display-font text-xl font-bold">لم تحفظ أي موضوع بعد</h2><p className="mt-2 text-sm leading-7 text-[hsl(var(--muted-foreground))]">أثناء المراجعة، استخدم زر الحفظ لتعود إلى الموضوع هنا.</p><Link href="/subjects" data-testid="link-review-browse" className="mt-5 inline-flex rounded-xl bg-[hsl(var(--primary))] px-5 py-3 text-sm font-bold text-[hsl(var(--primary-foreground))]">تصفح المواد</Link></div> : <div className="stagger space-y-3">{savedTopics.map(({ subject, topic, key }) => { const branch = subject.topics.clinical.some((candidate) => candidate.id === topic.id) ? 'clinical' : 'theory'; return <Link key={key} href={`/subject/${subject.id}/${branch}/topic/${topic.id}`} data-testid={`review-topic-${key}`} className="ink-card lift flex items-center gap-4 rounded-2xl p-4"><span className="flex h-10 w-10 items-center justify-center rounded-xl text-sm font-bold" style={{ color: accentMap[subject.accent].color, background: accentMap[subject.accent].soft }}>{subject.title.slice(0, 1)}</span><span className="min-w-0 flex-1"><span className="display-font block truncate font-bold">{topic.title}</span><span className="mt-1 block text-xs text-[hsl(var(--muted-foreground))]">{subject.title} · {topic.en}</span></span><span className="flex items-center gap-1 text-xs font-bold text-[hsl(var(--muted-foreground))]">{state.completed.includes(key) ? <><Check size={15} className="text-[hsl(158_46%_35%)]" />مكتمل</> : <><Bookmark size={15} className="text-[hsl(var(--accent))]" />محفوظ</>}</span><ArrowLeft size={18} className="text-[hsl(var(--muted-foreground))]" /></Link>; })}</div>}</div></Shell>;
+  return <Shell><div className="mx-auto max-w-[1040px] px-5 pb-16 pt-9 lg:px-8 lg:pt-14"><Breadcrumbs items={[{ title: 'مراجعتي' }]} /><div className="mb-8"><p className="mb-2 text-xs font-bold tracking-widest text-[hsl(var(--primary))]">مساحتك الشخصية</p><h1 className="display-font text-3xl font-bold">مراجعتك، كما تركتها.</h1><p className="mt-3 text-sm leading-7 text-[hsl(var(--muted-foreground))]">ستجد هنا الموضوعات التي حفظتها أو أنهيتها، لتعود إليها دون بحث.</p></div><div className="mb-8 grid gap-4 sm:grid-cols-3"><div className="ink-card rounded-2xl p-5"><span className="text-xs font-bold text-[hsl(var(--muted-foreground))]">مكتمل</span><strong className="display-font mt-2 block text-3xl text-[hsl(158_46%_35%)]">{completedCount}</strong></div><div className="ink-card rounded-2xl p-5"><span className="text-xs font-bold text-[hsl(var(--muted-foreground))]">محفوظ</span><strong className="display-font mt-2 block text-3xl text-[hsl(var(--accent))]">{state.favorites.length}</strong></div><div className="ink-card rounded-2xl p-5"><span className="text-xs font-bold text-[hsl(var(--muted-foreground))]">قيد المراجعة</span><strong className="display-font mt-2 block text-3xl text-[hsl(var(--primary))]">{Object.keys(state.topicProgress).length}</strong></div></div>{savedTopics.length === 0 ? <div className="ink-card rounded-2xl p-12 text-center"><Bookmark className="mx-auto mb-3 text-[hsl(var(--muted-foreground))]" size={29} /><h2 className="display-font text-xl font-bold">لم تحفظ أي موضوع بعد</h2><p className="mt-2 text-sm leading-7 text-[hsl(var(--muted-foreground))]">أثناء المراجعة، استخدم زر الحفظ لتعود إلى الموضوع هنا.</p><Link href="/subjects" data-testid="link-review-browse" className="mt-5 inline-flex rounded-xl bg-[hsl(var(--primary))] px-5 py-3 text-sm font-bold text-[hsl(var(--primary-foreground))]">تصفح المواد</Link></div> : <div className="stagger space-y-3">{savedTopics.map(({ subject, topic, key }) => <Link key={key} href={`/subject/${subject.id}/theory/topic/${topic.id}`} data-testid={`review-topic-${key}`} className="ink-card lift flex items-center gap-4 rounded-2xl p-4"><span className="flex h-10 w-10 items-center justify-center rounded-xl text-sm font-bold" style={{ color: accentMap[subject.accent].color, background: accentMap[subject.accent].soft }}>{subject.title.slice(0, 1)}</span><span className="min-w-0 flex-1"><span className="topic-english block truncate">{topic.en}</span><span className="topic-arabic mt-1 block truncate">{topic.title}</span><span className="mt-1 block text-xs text-[hsl(var(--muted-foreground))]">{subject.english} · {subject.title}</span></span><span className="flex items-center gap-1 text-xs font-bold text-[hsl(var(--muted-foreground))]">{state.completed.includes(key) ? <><Check size={15} className="text-[hsl(158_46%_35%)]" />مكتمل</> : <><Bookmark size={15} className="text-[hsl(var(--accent))]" />محفوظ</>}</span><ArrowLeft size={18} className="text-[hsl(var(--muted-foreground))]" /></Link>)}</div>}</div></Shell>;
 }
 
 function SubjectPage() {
@@ -217,7 +228,7 @@ function SubjectPage() {
 function BranchCard({ subject, branch }: { subject: Subject; branch: Branch }) {
   const theory = branch === 'theory';
   const colors = accentMap[subject.accent];
-  return <Link href={`/subject/${subject.id}/${branch}`} data-testid={`card-branch-${branch}`} className="selection-card ink-card group flex items-center justify-between rounded-2xl p-6 hover:border-[hsl(var(--primary)/.35)]"><div className="flex items-center gap-4"><span className="flex h-14 w-14 items-center justify-center rounded-2xl" style={{ color: colors.color, background: colors.soft }}>{theory ? <BookOpen size={24} /> : <Stethoscope size={24} />}</span><div><h3 className="display-font text-xl font-bold">{theory ? 'نظري' : 'سريري'}</h3><p className="mt-1 text-sm text-[hsl(var(--muted-foreground))]">{theory ? 'المفاهيم، الآليات، والتشخيص' : 'فحص، تفكير سريري، وتطبيق'}</p><span className="mt-3 inline-block text-xs font-bold" style={{ color: colors.color }}>{subject.topics[branch].length} موضوعات</span></div></div><ArrowLeft className="text-[hsl(var(--muted-foreground))] transition group-hover:-translate-x-1" size={21} /></Link>;
+  return <Link href={`/subject/${subject.id}/${branch}`} data-testid={`card-branch-${branch}`} className="selection-card ink-card group flex items-center justify-between rounded-2xl p-6 hover:border-[hsl(var(--primary)/.35)]"><div className="flex items-center gap-4"><span className="flex h-14 w-14 items-center justify-center rounded-2xl" style={{ color: colors.color, background: colors.soft }}>{theory ? <BookOpen size={24} /> : <Stethoscope size={24} />}</span><div><h3 className="subject-english text-xl">{theory ? 'Theoretical' : 'Clinical'}</h3><p className="subject-arabic mt-1">{theory ? 'نظري' : 'سريري'}</p><p className="mt-3 text-xs font-semibold text-[hsl(var(--muted-foreground))]">{theory ? 'Lectures · Explanation · Summaries · Hints · MCQs · Review' : 'PDFs · Practical Application'}</p><span className="mt-3 inline-block text-xs font-bold" style={{ color: colors.color }}>{subject.topics[branch].length} topics</span></div></div><ArrowLeft className="text-[hsl(var(--muted-foreground))] transition group-hover:-translate-x-1" size={21} /></Link>;
 }
 
 function TopicsPage() {
@@ -228,8 +239,8 @@ function TopicsPage() {
   const [query, setQuery] = useState('');
   const [onlyImportant, setOnlyImportant] = useState(false);
   const { state } = useStudyState();
-  const topics = useMemo(() => subject.topics[branch].filter((topic) => `${topic.title} ${topic.en}`.toLowerCase().includes(query.toLowerCase()) && (!onlyImportant || topic.tag)), [branch, onlyImportant, query, subject]);
-  return <Shell><div className="mx-auto max-w-[1040px] px-5 pb-16 pt-9 lg:px-8 lg:pt-14"><Breadcrumbs items={[{ title: 'المواد', href: '/subjects' }, { title: subject.title, href: `/subject/${subject.id}` }, { title: branch === 'theory' ? 'نظري' : 'سريري' }]} /><div className="mb-8 flex flex-wrap items-end justify-between gap-5"><div><div className="mb-2 flex items-center gap-2 text-xs font-bold tracking-widest" style={{ color: colors.color }}><span className="h-2 w-2 rounded-full" style={{ background: colors.color }} />{branch === 'theory' ? 'المسار النظري' : 'المسار السريري'}</div><h1 className="subject-english text-3xl">{subject.english}</h1><p className="subject-arabic mt-2">{subject.title}</p><p className="mt-3 text-sm text-[hsl(var(--muted-foreground))]">اختر موضوعاً لفتح محاضراته وملخصاته وأسئلته.</p></div><div className="text-left text-xs font-bold text-[hsl(var(--muted-foreground))]"><span className="text-2xl font-bold text-[hsl(var(--foreground))]">{topics.length}</span> / {subject.topics[branch].length} موضوع</div></div><div className="mb-6 flex flex-col gap-3 sm:flex-row"><label className="relative flex-1"><Search className="absolute right-4 top-1/2 -translate-y-1/2 text-[hsl(var(--muted-foreground))]" size={19} /><input value={query} onChange={(e) => setQuery(e.target.value)} data-testid="input-topic-search" placeholder="ابحث عن موضوع..." className="h-12 w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] pr-12 pl-4 text-sm shadow-sm placeholder:text-[hsl(var(--muted-foreground))] focus:border-[hsl(var(--primary))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary)/.13)]" /></label><button type="button" onClick={() => setOnlyImportant((value) => !value)} data-testid="button-filter-important" className={`flex h-12 items-center justify-center gap-2 rounded-xl border px-5 text-sm font-bold transition ${onlyImportant ? 'border-[hsl(var(--primary))] bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]' : 'border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--muted-foreground))] hover:border-[hsl(var(--primary)/.4)]'}`}><ListFilter size={17} />المهم فقط</button></div><div className="stagger space-y-3">{topics.map((topic, index) => <TopicRow key={topic.id} topic={topic} subject={subject} branch={branch} index={index} done={state.completed.includes(`${subject.id}-${topic.id}`)} progress={state.topicProgress[`${subject.id}-${topic.id}`] ?? 0} />)}</div>{topics.length === 0 && <div className="ink-card rounded-2xl p-12 text-center"><Search className="mx-auto mb-3 text-[hsl(var(--muted-foreground))]" size={28} /><h3 className="display-font text-lg font-bold">لم نعثر على هذا الموضوع</h3><p className="mt-2 text-sm text-[hsl(var(--muted-foreground))]">جرّب كلمة أخرى أو ألغِ الفلتر.</p><button type="button" onClick={() => { setQuery(''); setOnlyImportant(false); }} data-testid="button-clear-filter" className="mt-5 text-sm font-bold text-[hsl(var(--primary))]">مسح البحث</button></div>}</div></Shell>;
+  const topics = useMemo(() => subject.topics[branch].filter((topic) => `${topic.title} ${topic.en}`.toLowerCase().includes(query.toLowerCase()) && (!onlyImportant || topic.tag || priorityTopicIds.has(topic.id))), [branch, onlyImportant, query, subject]);
+  return <Shell><div className="mx-auto max-w-[1040px] px-5 pb-16 pt-9 lg:px-8 lg:pt-14"><Breadcrumbs items={[{ title: 'المواد', href: '/subjects' }, { title: subject.title, href: `/subject/${subject.id}` }, { title: branch === 'theory' ? 'نظري' : 'سريري' }]} /><div className="mb-8 flex flex-wrap items-end justify-between gap-5"><div><div className="mb-2 flex items-center gap-2 text-xs font-bold tracking-widest" style={{ color: colors.color }}><span className="h-2 w-2 rounded-full" style={{ background: colors.color }} />{branch === 'theory' ? 'THEORETICAL' : 'CLINICAL'}</div><h1 className="subject-english text-3xl">{subject.english}</h1><p className="subject-arabic mt-2">{subject.title}</p><p className="mt-3 text-sm text-[hsl(var(--muted-foreground))]">اختر موضوعاً لفتح محاضراته وملخصاته وأسئلته.</p></div><div className="text-left text-xs font-bold text-[hsl(var(--muted-foreground))]"><span className="text-2xl font-bold text-[hsl(var(--foreground))]">{topics.length}</span> / {subject.topics[branch].length} topics</div></div><div className="mb-6 flex flex-col gap-3 sm:flex-row"><label className="relative flex-1"><Search className="absolute right-4 top-1/2 -translate-y-1/2 text-[hsl(var(--muted-foreground))]" size={19} /><input value={query} onChange={(e) => setQuery(e.target.value)} data-testid="input-topic-search" placeholder="ابحث عن موضوع..." className="h-12 w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] pr-12 pl-4 text-sm shadow-sm placeholder:text-[hsl(var(--muted-foreground))] focus:border-[hsl(var(--primary))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary)/.13)]" /></label><button type="button" onClick={() => setOnlyImportant((value) => !value)} data-testid="button-filter-important" className={`flex h-12 items-center justify-center gap-2 rounded-xl border px-5 text-sm font-bold transition ${onlyImportant ? 'border-[hsl(var(--primary))] bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]' : 'border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--muted-foreground))] hover:border-[hsl(var(--primary)/.4)]'}`}><ListFilter size={17} />المهم فقط</button></div><div className="stagger space-y-3">{topics.map((item, index) => <Fragment key={item.id}>{item.group && (index === 0 || topics[index - 1]?.group !== item.group) && <div className="topic-group-label">{item.group}</div>}<TopicRow topic={item} subject={subject} branch={branch} index={index} done={state.completed.includes(`${subject.id}-${item.id}`)} progress={state.topicProgress[`${subject.id}-${item.id}`] ?? 0} /></Fragment>)}</div>{topics.length === 0 && <div className="ink-card rounded-2xl p-12 text-center"><Search className="mx-auto mb-3 text-[hsl(var(--muted-foreground))]" size={28} /><h3 className="display-font text-lg font-bold">لم نعثر على هذا الموضوع</h3><p className="mt-2 text-sm text-[hsl(var(--muted-foreground))]">جرّب كلمة أخرى أو ألغِ الفلتر.</p><button type="button" onClick={() => { setQuery(''); setOnlyImportant(false); }} data-testid="button-clear-filter" className="mt-5 text-sm font-bold text-[hsl(var(--primary))]">مسح البحث</button></div>}</div></Shell>;
 }
 
 function TopicRow({ topic, subject, branch, index, done, progress }: { topic: Topic; subject: Subject; branch: Branch; index: number; done: boolean; progress: number }) {
@@ -250,14 +261,13 @@ function TopicPage() {
 
 function TopicTabs({ tab, setTab }: { tab: Tab; setTab: (tab: Tab) => void }) {
   const tabs: { id: Tab; label: string; icon: ReactNode }[] = [
-    { id: 'lectures', label: 'المحاضرات', icon: <PlayCircle size={16} /> }, { id: 'explanation', label: 'شرح', icon: <Lightbulb size={16} /> }, { id: 'summaries', label: 'ملخصات', icon: <FileText size={16} /> }, { id: 'hints', label: 'ملاحظات', icon: <CircleHelp size={16} /> }, { id: 'mcqs', label: 'أسئلة MCQs', icon: <ClipboardCheck size={16} /> }, { id: 'review', label: 'مراجعتي', icon: <Star size={16} /> },
+    { id: 'lectures', label: 'Lectures', icon: <PlayCircle size={16} /> }, { id: 'explanation', label: 'Explanation', icon: <Lightbulb size={16} /> }, { id: 'summaries', label: 'Summaries', icon: <FileText size={16} /> }, { id: 'hints', label: 'Hints', icon: <CircleHelp size={16} /> }, { id: 'mcqs', label: 'MCQs', icon: <ClipboardCheck size={16} /> }, { id: 'review', label: 'Review', icon: <Star size={16} /> },
   ];
   return <div className="no-scrollbar flex overflow-x-auto rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-1.5" role="tablist" data-testid="topic-tabs">{tabs.map((item) => <button type="button" role="tab" aria-selected={tab === item.id} onClick={() => setTab(item.id)} key={item.id} data-testid={`tab-${item.id}`} className={`flex min-w-max items-center gap-2 rounded-xl px-4 py-3 text-xs font-bold transition md:flex-1 md:justify-center ${tab === item.id ? 'bg-[hsl(var(--sidebar))] text-[hsl(var(--sidebar-foreground))] shadow-sm' : 'text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))]'}`}>{item.icon}{item.label}</button>)}</div>;
 }
 
 function Lectures({ topic }: { topic: Topic }) {
-  const [failed, setFailed] = useState(false);
-  return <div className="grid gap-6 lg:grid-cols-[1.35fr_.65fr]"><div className="overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(213_42%_18%)] shadow-lg"><div className="flex items-center justify-between border-b border-white/10 px-5 py-4 text-white"><div className="flex items-center gap-2 text-sm font-bold"><FileText size={17} className="text-[hsl(var(--sidebar-primary))]" />عرض المحاضرة</div><span className="text-[10px] text-white/55">PDF · {topic.en}</span></div>{failed ? <div className="flex min-h-[430px] flex-col items-center justify-center px-6 text-center text-white"><FileText size={35} className="mb-4 text-[hsl(var(--sidebar-primary))]" /><h3 className="display-font text-lg font-bold">تعذّر تحميل المعاينة</h3><p className="mt-2 max-w-sm text-sm leading-7 text-white/65">يمكنك فتح المادة في نافذة جديدة أو متابعة المراجعة من الملخصات.</p><a href={pdfUrl} target="_blank" rel="noreferrer" data-testid="link-open-pdf-fallback" className="mt-5 inline-flex items-center gap-2 rounded-xl bg-[hsl(var(--sidebar-primary))] px-4 py-3 text-sm font-bold text-[hsl(var(--sidebar-primary-foreground))]">فتح الملف <ArrowLeft size={16} /></a></div> : <iframe title={`محاضرة ${topic.title}`} src={`${pdfUrl}#page=1&view=FitH`} onError={() => setFailed(true)} className="h-[460px] w-full bg-white md:h-[540px]" data-testid="iframe-lecture-pdf" />}</div><aside className="ink-card rounded-2xl p-6"><span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]"><BookOpen size={20} /></span><h2 className="display-font mt-5 text-lg font-bold">طريقة المراجعة</h2><ol className="mt-4 space-y-4 text-sm leading-7 text-[hsl(var(--muted-foreground))]"><li className="flex gap-3"><b className="font-mono text-[hsl(var(--primary))]">01</b><span>اقرأ العناوين أولاً لتكوين خريطة ذهنية.</span></li><li className="flex gap-3"><b className="font-mono text-[hsl(var(--primary))]">02</b><span>دوّن العلامات الفارقة والأرقام المهمة.</span></li><li className="flex gap-3"><b className="font-mono text-[hsl(var(--primary))]">03</b><span>اختبر نفسك من تبويب الأسئلة.</span></li></ol></aside></div>;
+  return <div className="grid gap-6 lg:grid-cols-[1.35fr_.65fr]"><div className="overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(213_42%_18%)] shadow-lg"><div className="flex items-center justify-between border-b border-white/10 px-5 py-4 text-white"><div className="flex items-center gap-2 text-sm font-bold"><FileText size={17} className="text-[hsl(var(--sidebar-primary))]" />PDF Viewer</div><span className="text-[10px] text-white/55">{topic.en}</span></div><div className="pdf-placeholder flex min-h-[430px] flex-col items-center justify-center px-6 text-center text-white md:min-h-[540px]" data-testid="pdf-viewer-placeholder"><span className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-[hsl(var(--sidebar-primary)/.35)] bg-[hsl(var(--sidebar-primary)/.12)] text-[hsl(var(--sidebar-primary))]"><FileText size={30} /></span><h3 className="text-xl font-bold">PDF preview</h3><p className="mt-2 max-w-sm text-sm leading-7 text-white/65">Lecture materials for this topic will appear here.</p><a href={pdfUrl} target="_blank" rel="noreferrer" data-testid="link-open-pdf-fallback" className="mt-5 inline-flex items-center gap-2 rounded-xl bg-[hsl(var(--sidebar-primary))] px-4 py-3 text-sm font-bold text-[hsl(var(--sidebar-primary-foreground))]">فتح الملف <ArrowLeft size={16} /></a></div></div><aside className="ink-card rounded-2xl p-6"><span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]"><BookOpen size={20} /></span><h2 className="display-font mt-5 text-lg font-bold">طريقة المراجعة</h2><ol className="mt-4 space-y-4 text-sm leading-7 text-[hsl(var(--muted-foreground))]"><li className="flex gap-3"><b className="font-mono text-[hsl(var(--primary))]">01</b><span>اقرأ العناوين أولاً لتكوين خريطة ذهنية.</span></li><li className="flex gap-3"><b className="font-mono text-[hsl(var(--primary))]">02</b><span>دوّن العلامات الفارقة والأرقام المهمة.</span></li><li className="flex gap-3"><b className="font-mono text-[hsl(var(--primary))]">03</b><span>اختبر نفسك من تبويب الأسئلة.</span></li></ol></aside></div>;
 }
 
 function Explanation({ topic }: { topic: Topic }) {
@@ -279,7 +289,7 @@ function Quiz({ topicKey, onProgress }: { topicKey: string; onProgress: (value: 
   return <div className="ink-card rounded-2xl p-6 md:p-9"><div className="mb-8 flex items-center justify-between"><div><p className="text-xs font-bold tracking-widest text-[hsl(var(--primary))]">اختبر فهمك</p><h2 className="display-font mt-2 text-xl font-bold">سؤال {current + 1} من {questions.length}</h2></div><span className="rounded-full bg-[hsl(var(--secondary))] px-3 py-2 text-xs font-bold">النتيجة: {score}</span></div><div className="mb-8 h-2 overflow-hidden rounded-full bg-[hsl(var(--secondary))]"><div className="progress-bar h-full rounded-full bg-[hsl(var(--primary))]" style={{ width: `${((current + (selected !== null ? 1 : 0)) / questions.length) * 100}%` }} /></div><h3 className="max-w-2xl text-lg font-bold leading-9">{question.question}</h3><div className="mt-6 grid gap-3">{question.options.map((option, index) => { const isCorrect = selected !== null && index === question.answer; const isWrong = selected === index && index !== question.answer; return <button type="button" key={option} onClick={() => choose(index)} disabled={selected !== null} data-testid={`button-answer-${index}`} className={`flex items-center justify-between rounded-xl border p-4 text-right text-sm font-bold transition ${isCorrect ? 'border-[hsl(158_46%_35%)] bg-[hsl(158_46%_35%/.1)] text-[hsl(158_46%_35%)]' : isWrong ? 'border-[hsl(var(--destructive))] bg-[hsl(var(--destructive)/.08)] text-[hsl(var(--destructive))]' : 'border-[hsl(var(--border))] hover:border-[hsl(var(--primary)/.45)] hover:bg-[hsl(var(--secondary)/.55)]'}`}><span className="flex items-center gap-3"><span className="font-mono text-xs text-[hsl(var(--muted-foreground))]">{String.fromCharCode(65 + index)}</span>{option}</span>{isCorrect && <Check size={18} />}{isWrong && <X size={18} />}</button>; })}</div>{selected !== null && <div className={`mt-6 rounded-xl p-4 text-sm leading-7 ${selected === question.answer ? 'bg-[hsl(158_46%_35%/.1)] text-[hsl(158_46%_35%)]' : 'bg-[hsl(var(--destructive)/.08)] text-[hsl(var(--destructive))]'}`}><b>{selected === question.answer ? 'إجابة صحيحة. ' : 'ليست الإجابة الصحيحة. '}</b>{question.explanation}</div>}{selected !== null && <button type="button" onClick={next} data-testid="button-next-question" className="mt-6 flex items-center gap-2 rounded-xl bg-[hsl(var(--primary))] px-5 py-3 text-sm font-bold text-[hsl(var(--primary-foreground))]">{current === questions.length - 1 ? 'عرض النتيجة' : 'السؤال التالي'}<ArrowLeft size={17} /></button>}</div>;
 }
 
-function Review({ topic, completed, onComplete }: { topic: Topic; completed: boolean; onComplete: () => void }) { return <div className="grid gap-5 md:grid-cols-[1fr_.8fr]"><div className="ink-card rounded-2xl p-6 md:p-8"><div className="flex items-center gap-3"><Star className="text-[hsl(var(--accent))]" size={23} /><h2 className="display-font text-xl font-bold">مراجعة {topic.title}</h2></div><p className="mt-5 text-sm leading-8 text-[hsl(var(--muted-foreground))]">أغلقت دائرة المراجعة عندما قرأت، فهمت، لخّصت، ثم اختبرت نفسك. سجّل الموضوع كمكتمل لتعود إليه ضمن إنجازاتك.</p><button type="button" onClick={onComplete} data-testid="button-review-complete" className={`mt-6 flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-bold ${completed ? 'bg-[hsl(158_46%_35%)] text-white' : 'bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]'}`}><Check size={17} />{completed ? 'هذا الموضوع مكتمل' : 'تحديد كمكتمل'}</button></div><div className="rounded-2xl bg-[hsl(var(--sidebar))] p-6 text-[hsl(var(--sidebar-foreground))]"><HeartPulse className="text-[hsl(var(--sidebar-primary))]" size={25} /><h3 className="display-font mt-5 text-lg font-bold">نصيحة سريرية</h3><p className="mt-3 text-sm leading-8 text-white/65">المعرفة الطبية تصبح أقوى عندما تشرحها وتطبقها، لا عندما تمر عليها بعينيك فقط.</p></div></div>; }
+function Review({ topic, completed, onComplete }: { topic: Topic; completed: boolean; onComplete: () => void }) { return <div className="grid gap-5 md:grid-cols-[1fr_.8fr]"><div className="ink-card rounded-2xl p-6 md:p-8"><div className="flex items-center gap-3"><Star className="text-[hsl(var(--accent))]" size={23} /><div><h2 className="topic-english text-xl">Review · {topic.en}</h2><p className="topic-arabic mt-1">{topic.title}</p></div></div><p className="mt-5 text-sm leading-8 text-[hsl(var(--muted-foreground))]">أغلقت دائرة المراجعة عندما قرأت، فهمت، لخّصت، ثم اختبرت نفسك. سجّل الموضوع كمكتمل لتعود إليه ضمن إنجازاتك.</p><button type="button" onClick={onComplete} data-testid="button-review-complete" className={`mt-6 flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-bold ${completed ? 'bg-[hsl(158_46%_35%)] text-white' : 'bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]'}`}><Check size={17} />{completed ? 'هذا الموضوع مكتمل' : 'تحديد كمكتمل'}</button></div><div className="rounded-2xl bg-[hsl(var(--sidebar))] p-6 text-[hsl(var(--sidebar-foreground))]"><HeartPulse className="text-[hsl(var(--sidebar-primary))]" size={25} /><h3 className="display-font mt-5 text-lg font-bold">نصيحة سريرية</h3><p className="mt-3 text-sm leading-8 text-white/65">المعرفة الطبية تصبح أقوى عندما تشرحها وتطبقها، لا عندما تمر عليها بعينيك فقط.</p></div></div>; }
 
 function Router() { return <Switch><Route path="/" component={Home} /><Route path="/subjects" component={SubjectsPage} /><Route path="/review" component={ReviewPage} /><Route path="/subject/:subjectId" component={SubjectPage} /><Route path="/subject/:subjectId/:branchId" component={TopicsPage} /><Route path="/subject/:subjectId/:branchId/topic/:topicId" component={TopicPage} /><Route component={Home} /></Switch>; }
 function RoutedErrorBoundary({ children }: { children: ReactNode }) { const [location] = useLocation(); return <ErrorBoundary resetKey={location}>{children}</ErrorBoundary>; }
