@@ -140,16 +140,13 @@ function useStudyState() {
 function Shell({ children }: { children: ReactNode }) {
   return <div className="app-shell">
     <header className="sticky top-0 z-30 border-b border-[#E5EAF0] bg-white">
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '8px 16px', direction: 'ltr' }}>
+      <div style={{ display: 'flex', alignItems: 'center', width: '100%', padding: '8px 16px', direction: 'ltr' }}>
         <button type="button" style={{ background: 'none', border: 'none', fontSize: '24px', color: '#0F2942', cursor: 'pointer', lineHeight: 1 }} data-testid="button-mobile-menu" aria-label="فتح القائمة">☰</button>
+        <div style={{ flex: 1 }} aria-hidden="true" />
         <Link href="/" data-testid="link-brand" style={{ display: 'flex', alignItems: 'center', gap: '12px', direction: 'rtl' }}>
-          <img className="brand-badge" src="/logo.png" alt="شعار ستاجير" style={{ width: '46px', height: '46px', minWidth: '46px', borderRadius: '14px', objectFit: 'cover', display: 'block', boxShadow: '0 4px 10px rgba(15, 41, 66, 0.2)' }} data-testid="img-brand-logo" />
-          <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'right' }}>
-            <span className="brand-name" style={{ fontFamily: "'Aref Ruqaa', 'Amiri', serif", fontSize: '28px', fontWeight: 700, color: '#0F2942', lineHeight: 1.1 }}>ستاجير</span>
-            <span className="brand-subtitle" style={{ fontFamily: "'Amiri', serif", fontSize: '13px', color: '#5A6E85', fontWeight: 600, lineHeight: 1 }}>كُلّ مَا تَحْتَاجَهُ فِي الطِّبّ</span>
-          </div>
+          <img className="brand-badge" src="/logo.png" alt="شعار ستاجير" style={{ width: '42px', height: '42px', minWidth: '42px', borderRadius: '12px', objectFit: 'cover', display: 'block', boxShadow: '0 4px 10px rgba(15, 41, 66, 0.15)' }} data-testid="img-brand-logo" />
+          <img src="/brand_text.png" alt="ستاجير - كل ما تحتاجه في الطب" style={{ height: '40px', width: 'auto', maxWidth: '180px', objectFit: 'contain', display: 'block' }} data-testid="img-brand-text" />
         </Link>
-        <div style={{ width: '24px' }} aria-hidden="true" />
       </div>
     </header>
     <main>{children}</main>
