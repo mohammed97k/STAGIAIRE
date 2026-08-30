@@ -143,8 +143,8 @@ function Shell({ children }: { children: ReactNode }) {
     <header className="sticky top-0 z-30 border-b border-[#E5EAF0] bg-white">
       <div className="mx-auto flex h-[74px] max-w-[1240px] items-center justify-between px-5 lg:px-8">
         <Link href="/" className="group flex items-center gap-3" data-testid="link-brand">
-          <span className="brand-badge flex h-[45px] w-[45px] shrink-0 items-center justify-center rounded-full bg-[#0F2942] text-white shadow-sm" aria-hidden="true"><Stethoscope size={23} strokeWidth={2.1} /></span>
-          <span className="brand-copy leading-none"><span className="brand-name block text-[18px] font-bold">ستاجير</span><span className="brand-subtitle mt-1 block text-[10px] font-medium">كُلّ مَا تَحْتَاجَه في الطِّب</span></span>
+          <span className="brand-badge flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-full bg-[#0F2942] text-white shadow-sm" aria-hidden="true"><Stethoscope size={23} strokeWidth={2.1} /></span>
+          <span className="brand-copy leading-none"><span className="brand-name block">ستاجير</span><span className="brand-subtitle mt-1 block">كُلّ مَا تَحْتَاجَه في الطِّب · المرحلة السادسة</span></span>
         </Link>
         <nav className="hidden items-center gap-2 md:flex">
           <Link href="/" data-testid="link-home" className={`rounded-xl px-4 py-2 text-sm font-bold transition ${location === '/' ? 'bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]' : 'text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))]'}`}><HomeIcon className="ml-2 inline-block" size={16} />الرئيسية</Link>
