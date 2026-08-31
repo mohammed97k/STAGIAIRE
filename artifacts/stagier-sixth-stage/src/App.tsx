@@ -5,7 +5,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import {
   ArrowLeft, BookOpen, Bookmark, Check, ChevronLeft, CircleHelp,
-  ClipboardCheck, Clock3, FileText, HeartPulse, Home as HomeIcon, Lightbulb,
+  ClipboardCheck, Clock3, Download, FileText, HeartPulse, Home as HomeIcon, Lightbulb,
   ListFilter, PlayCircle, Search, Star, Stethoscope, Target, X,
 } from 'lucide-react';
 import { Link, Route, Switch, useLocation, useParams, Router as WouterRouter } from 'wouter';
@@ -13,18 +13,36 @@ import { Link, Route, Switch, useLocation, useParams, Router as WouterRouter } f
 type Accent = 'navy' | 'green' | 'orange' | 'purple';
 type Branch = 'theory' | 'clinical';
 type Tab = 'lectures' | 'explanation' | 'summaries' | 'hints' | 'mcqs' | 'review';
-type Topic = { id: string; title: string; en: string; count: number; duration: string; tag?: string; group?: string };
+type Lecture = { id: string; title: string; pdf: string; pages: number };
+type Topic = { id: string; title: string; en: string; count: number; duration: string; tag?: string; group?: string; lectures?: Lecture[] };
 type Subject = { id: string; title: string; english: string; accent: Accent; icon: string; description: string; topics: Record<Branch, Topic[]> };
 
 const topic = (id: string, en: string, title: string, group?: string): Topic => ({
   id, en, title, count: 12, duration: 'ساعتان', ...(group ? { group } : {}),
 });
 
+const endocrinologyLectures: Lecture[] = [
+  { id: 'pituitary-gland-part-1', title: 'Pituitary Gland - Part 1', pdf: '/lectures/01-pituitary-gland-part-1.pdf', pages: 11 },
+  { id: 'pituitary-gland-part-2', title: 'Pituitary Gland - Part 2', pdf: '/lectures/02-pituitary-gland-part-2.pdf', pages: 10 },
+  { id: 'adrenal-gland-part-1', title: 'Adrenal Gland - Part 1', pdf: '/lectures/03-adrenal-gland-part-1.pdf', pages: 8 },
+  { id: 'adrenal-gland-part-2', title: 'Adrenal Gland - Part 2', pdf: '/lectures/04-adrenal-gland-part-2.pdf', pages: 12 },
+  { id: 'parathyroid-gland', title: 'Parathyroid Gland', pdf: '/lectures/05-parathyroid-gland.pdf', pages: 9 },
+  { id: 'male-hypogonadism', title: 'Male Hypogonadism', pdf: '/lectures/06-male-hypogonadism.pdf', pages: 5 },
+  { id: 'lipid-abnormalities', title: 'Lipid Abnormalities', pdf: '/lectures/07-lipid-abnormalities.pdf', pages: 10 },
+];
+
+const endocrinologyTopic: Topic = {
+  ...topic('endocrinology', 'Endocrinology', 'الغدد الصماء'),
+  count: endocrinologyLectures.length,
+  duration: '7 lectures',
+  lectures: endocrinologyLectures,
+};
+
 const internalMedicineTopics = [
   topic('cardiology', 'Cardiology', 'أمراض القلب'),
   topic('respiratory', 'Respiratory Medicine', 'الأمراض التنفسية'),
   topic('gastroenterology', 'Gastroenterology', 'أمراض الجهاز الهضمي'),
-  topic('endocrinology', 'Endocrinology', 'الغدد الصماء'),
+  endocrinologyTopic,
   topic('nephrology', 'Nephrology', 'أمراض الكلى'),
   topic('infectious-diseases', 'Infectious Diseases', 'الأمراض الانتقالية'),
   topic('hematology', 'Hematology', 'أمراض الدم'),
@@ -251,7 +269,7 @@ function TopicPage() {
   const topicKey = `${subject.id}-${topic.id}`;
   const { state, toggle, markProgress } = useStudyState();
   const [tab, setTab] = useState<Tab>('lectures');
-  return <Shell><div className="mx-auto max-w-[1160px] px-5 pb-16 pt-8 lg:px-8 lg:pt-12"><Breadcrumbs items={[{ title: 'المواد', href: '/subjects' }, { title: subject.title, href: `/subject/${subject.id}` }, { title: branch === 'theory' ? 'نظري' : 'سريري', href: `/subject/${subject.id}/${branch}` }, { title: topic.title }]} /><div className="mb-7 flex flex-wrap items-start justify-between gap-4"><div><h1 className="topic-english text-2xl md:text-3xl">{topic.en}</h1><p className="topic-arabic mt-2">{topic.title}</p><p className="mt-2 text-sm text-[hsl(var(--muted-foreground))]">مراجعة مركّزة · {topic.count} محاضرة</p></div><div className="flex gap-2"><button type="button" onClick={() => toggle('favorites', topicKey)} data-testid="button-favorite-topic" aria-label="حفظ الموضوع" className={`flex h-11 items-center gap-2 rounded-xl border px-4 text-sm font-bold transition ${state.favorites.includes(topicKey) ? 'border-[hsl(29_85%_57%/.4)] bg-[hsl(29_85%_57%/.12)] text-[hsl(30_55%_34%)]' : 'border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--muted-foreground))]'}`}><Bookmark size={17} fill={state.favorites.includes(topicKey) ? 'currentColor' : 'none'} />{state.favorites.includes(topicKey) ? 'محفوظ' : 'حفظ'}</button><button type="button" onClick={() => toggle('completed', topicKey)} data-testid="button-complete-topic" className={`flex h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition ${state.completed.includes(topicKey) ? 'bg-[hsl(158_46%_35%)] text-white' : 'bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]'}`}><Check size={17} />{state.completed.includes(topicKey) ? 'مكتمل' : 'أكملت الموضوع'}</button></div></div><div className="mb-7 rounded-2xl bg-[hsl(var(--secondary)/.7)] p-4"><div className="mb-2 flex items-center justify-between text-xs font-bold"><span>تقدم المراجعة</span><span style={{ color: accentMap[subject.accent].color }}>{state.topicProgress[topicKey] ?? 0}%</span></div><div className="h-2 overflow-hidden rounded-full bg-[hsl(var(--card))]"><div className="progress-bar h-full rounded-full" style={{ width: `${state.topicProgress[topicKey] ?? 0}%`, background: accentMap[subject.accent].color }} /></div></div><TopicTabs tab={tab} setTab={setTab} /><div className="page-in mt-6">{tab === 'lectures' && <Lectures topic={topic} />}{tab === 'explanation' && <Explanation topic={topic} />}{tab === 'summaries' && <Summaries topic={topic} />}{tab === 'hints' && <Hints />}{tab === 'mcqs' && <Quiz topicKey={topicKey} onProgress={(value) => markProgress(topicKey, value)} />}{tab === 'review' && <Review topic={topic} completed={state.completed.includes(topicKey)} onComplete={() => toggle('completed', topicKey)} />}</div></div></Shell>;
+  return <Shell><div className="mx-auto max-w-[1160px] px-5 pb-16 pt-8 lg:px-8 lg:pt-12"><Breadcrumbs items={[{ title: 'المواد', href: '/subjects' }, { title: subject.title, href: `/subject/${subject.id}` }, { title: branch === 'theory' ? 'نظري' : 'سريري', href: `/subject/${subject.id}/${branch}` }, { title: topic.title }]} /><div className="mb-7 flex flex-wrap items-start justify-between gap-4"><div><h1 className="topic-english text-2xl md:text-3xl">{topic.en}</h1><p className="topic-arabic mt-2">{topic.title}</p><p className="mt-2 text-sm text-[hsl(var(--muted-foreground))]">مراجعة مركّزة · {topic.count} محاضرة</p></div><div className="flex gap-2"><button type="button" onClick={() => toggle('favorites', topicKey)} data-testid="button-favorite-topic" aria-label="حفظ الموضوع" className={`flex h-11 items-center gap-2 rounded-xl border px-4 text-sm font-bold transition ${state.favorites.includes(topicKey) ? 'border-[hsl(29_85%_57%/.4)] bg-[hsl(29_85%_57%/.12)] text-[hsl(30_55%_34%)]' : 'border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--muted-foreground))]'}`}><Bookmark size={17} fill={state.favorites.includes(topicKey) ? 'currentColor' : 'none'} />{state.favorites.includes(topicKey) ? 'محفوظ' : 'حفظ'}</button><button type="button" onClick={() => toggle('completed', topicKey)} data-testid="button-complete-topic" className={`flex h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition ${state.completed.includes(topicKey) ? 'bg-[hsl(158_46%_35%)] text-white' : 'bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]'}`}><Check size={17} />{state.completed.includes(topicKey) ? 'مكتمل' : 'أكملت الموضوع'}</button></div></div><div className="mb-7 rounded-2xl bg-[hsl(var(--secondary)/.7)] p-4"><div className="mb-2 flex items-center justify-between text-xs font-bold"><span>تقدم المراجعة</span><span style={{ color: accentMap[subject.accent].color }}>{state.topicProgress[topicKey] ?? 0}%</span></div><div className="h-2 overflow-hidden rounded-full bg-[hsl(var(--card))]"><div className="progress-bar h-full rounded-full" style={{ width: `${state.topicProgress[topicKey] ?? 0}%`, background: accentMap[subject.accent].color }} /></div></div><TopicTabs tab={tab} setTab={setTab} /><div className="page-in mt-6">{tab === 'lectures' && <Lectures topic={topic} topicKey={topicKey} completedIds={state.completed} onComplete={(lectureId) => toggle('completed', `lecture:${topicKey}:${lectureId}`)} />}{tab === 'explanation' && <Explanation topic={topic} />}{tab === 'summaries' && <Summaries topic={topic} />}{tab === 'hints' && <Hints />}{tab === 'mcqs' && <Quiz topicKey={topicKey} onProgress={(value) => markProgress(topicKey, value)} />}{tab === 'review' && <Review topic={topic} completed={state.completed.includes(topicKey)} onComplete={() => toggle('completed', topicKey)} />}</div></div></Shell>;
 }
 
 function TopicTabs({ tab, setTab }: { tab: Tab; setTab: (tab: Tab) => void }) {
@@ -261,8 +279,33 @@ function TopicTabs({ tab, setTab }: { tab: Tab; setTab: (tab: Tab) => void }) {
   return <div className="no-scrollbar flex overflow-x-auto rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-1.5" role="tablist" data-testid="topic-tabs">{tabs.map((item) => <button type="button" role="tab" aria-selected={tab === item.id} onClick={() => setTab(item.id)} key={item.id} data-testid={`tab-${item.id}`} className={`flex min-w-max items-center gap-2 rounded-xl px-4 py-3 text-xs font-bold transition md:flex-1 md:justify-center ${tab === item.id ? 'bg-[hsl(var(--sidebar))] text-[hsl(var(--sidebar-foreground))] shadow-sm' : 'text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--secondary))]'}`}>{item.icon}{item.label}</button>)}</div>;
 }
 
-function Lectures({ topic }: { topic: Topic }) {
-  return <div className="grid gap-6 lg:grid-cols-[1.35fr_.65fr]"><div className="overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(213_42%_18%)] shadow-lg"><div className="flex items-center justify-between border-b border-white/10 px-5 py-4 text-white"><div className="flex items-center gap-2 text-sm font-bold"><FileText size={17} className="text-[hsl(var(--sidebar-primary))]" />PDF Viewer</div><span className="text-[10px] text-white/55">{topic.en}</span></div><div className="pdf-placeholder flex min-h-[430px] flex-col items-center justify-center px-6 text-center text-white md:min-h-[540px]" data-testid="pdf-viewer-placeholder"><span className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-[hsl(var(--sidebar-primary)/.35)] bg-[hsl(var(--sidebar-primary)/.12)] text-[hsl(var(--sidebar-primary))]"><FileText size={30} /></span><h3 className="text-xl font-bold">PDF preview</h3><p className="mt-2 max-w-sm text-sm leading-7 text-white/65">Lecture materials for this topic will appear here.</p><a href={pdfUrl} target="_blank" rel="noreferrer" data-testid="link-open-pdf-fallback" className="mt-5 inline-flex items-center gap-2 rounded-xl bg-[hsl(var(--sidebar-primary))] px-4 py-3 text-sm font-bold text-[hsl(var(--sidebar-primary-foreground))]">فتح الملف <ArrowLeft size={16} /></a></div></div><aside className="ink-card rounded-2xl p-6"><span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]"><BookOpen size={20} /></span><h2 className="display-font mt-5 text-lg font-bold">طريقة المراجعة</h2><ol className="mt-4 space-y-4 text-sm leading-7 text-[hsl(var(--muted-foreground))]"><li className="flex gap-3"><b className="font-mono text-[hsl(var(--primary))]">01</b><span>اقرأ العناوين أولاً لتكوين خريطة ذهنية.</span></li><li className="flex gap-3"><b className="font-mono text-[hsl(var(--primary))]">02</b><span>دوّن العلامات الفارقة والأرقام المهمة.</span></li><li className="flex gap-3"><b className="font-mono text-[hsl(var(--primary))]">03</b><span>اختبر نفسك من تبويب الأسئلة.</span></li></ol></aside></div>;
+function Lectures({ topic, topicKey, completedIds, onComplete }: { topic: Topic; topicKey: string; completedIds: string[]; onComplete: (lectureId: string) => void }) {
+  const lectures = topic.lectures ?? [];
+  const [selectedId, setSelectedId] = useState(lectures[0]?.id ?? '');
+  useEffect(() => { setSelectedId(lectures[0]?.id ?? ''); }, [topic.id]);
+  const selectedLecture = lectures.find((lecture) => lecture.id === selectedId) ?? null;
+  const selectedCompletionKey = selectedLecture ? `lecture:${topicKey}:${selectedLecture.id}` : '';
+  const selectedCompleted = selectedCompletionKey ? completedIds.includes(selectedCompletionKey) : false;
+
+  return <div className="grid gap-6 lg:grid-cols-[1.35fr_.65fr]">
+    <div className="overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(213_42%_18%)] shadow-lg">
+      <div className="flex items-center justify-between border-b border-white/10 px-5 py-4 text-white">
+        <div className="flex items-center gap-2 text-sm font-bold"><FileText size={17} className="text-[hsl(var(--sidebar-primary))]" />PDF Viewer</div>
+        <span className="text-[10px] text-white/55">{selectedLecture?.title ?? topic.en}</span>
+      </div>
+      {selectedLecture ? <div>
+        <iframe title={selectedLecture.title} src={`${selectedLecture.pdf}#page=1&view=FitH`} className="h-[460px] w-full bg-white md:h-[540px]" data-testid="iframe-lecture-pdf" />
+        <div className="flex flex-wrap gap-3 border-t border-white/10 p-4">
+          <a href={selectedLecture.pdf} download data-testid="link-download-pdf" className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-[hsl(var(--sidebar-primary))] px-4 py-3 text-xs font-bold text-[hsl(var(--sidebar-primary-foreground))] transition hover:-translate-y-0.5 sm:flex-none"><Download size={16} /><span className="text-right"><span className="block">Download PDF</span><span className="mt-0.5 block text-[10px] opacity-70">تحميل المحاضرة</span></span></a>
+          <button type="button" onClick={() => onComplete(selectedLecture.id)} aria-pressed={selectedCompleted} data-testid={`button-complete-lecture-${selectedLecture.id}`} className={`inline-flex flex-1 items-center justify-center gap-2 rounded-xl border px-4 py-3 text-xs font-bold transition sm:flex-none ${selectedCompleted ? 'border-[hsl(158_46%_35%)] bg-[hsl(158_46%_35%)] text-white' : 'border-white/20 bg-white/10 text-white hover:bg-white/15'}`}><Check size={16} /><span className="text-right"><span className="block">Mark as Completed</span><span className="mt-0.5 block text-[10px] opacity-70">{selectedCompleted ? 'تمت القراءة' : 'أكملت القراءة'}</span></span></button>
+        </div>
+      </div> : <div className="pdf-placeholder flex min-h-[430px] flex-col items-center justify-center px-6 text-center text-white md:min-h-[540px]" data-testid="pdf-viewer-placeholder"><span className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-[hsl(var(--sidebar-primary)/.35)] bg-[hsl(var(--sidebar-primary)/.12)] text-[hsl(var(--sidebar-primary))]"><FileText size={30} /></span><h3 className="text-xl font-bold">PDF preview</h3><p className="mt-2 max-w-sm text-sm leading-7 text-white/65">Lecture materials for this topic will appear here.</p><a href={pdfUrl} target="_blank" rel="noreferrer" data-testid="link-open-pdf-fallback" className="mt-5 inline-flex items-center gap-2 rounded-xl bg-[hsl(var(--sidebar-primary))] px-4 py-3 text-sm font-bold text-[hsl(var(--sidebar-primary-foreground))]">فتح الملف <ArrowLeft size={16} /></a></div>}
+    </div>
+    {lectures.length > 0 ? <aside className="ink-card rounded-2xl p-5">
+      <div className="mb-4 flex items-center justify-between"><div><p className="text-xs font-bold tracking-widest text-[hsl(var(--primary))]">ENDOCRINOLOGY</p><h2 className="display-font mt-2 text-lg font-bold">Lecture list</h2></div><span className="rounded-full bg-[hsl(var(--secondary))] px-3 py-2 text-xs font-bold">{lectures.length}</span></div>
+      <div className="space-y-2">{lectures.map((lecture, index) => { const done = completedIds.includes(`lecture:${topicKey}:${lecture.id}`); const active = selectedLecture?.id === lecture.id; return <button type="button" key={lecture.id} onClick={() => setSelectedId(lecture.id)} data-testid={`card-lecture-${lecture.id}`} className={`flex w-full items-center gap-3 rounded-xl border p-3 text-right transition ${active ? 'border-[hsl(var(--primary)/.45)] bg-[hsl(var(--secondary)/.75)]' : 'border-transparent hover:border-[hsl(var(--border))] hover:bg-[hsl(var(--secondary)/.45)]'}`}><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[hsl(var(--secondary))] font-mono text-xs font-bold text-[hsl(var(--primary))]">{String(index + 1).padStart(2, '0')}</span><span className="min-w-0 flex-1"><span className="block truncate text-sm font-bold">{lecture.title}</span><span className="mt-1 block text-[11px] text-[hsl(var(--muted-foreground))]">{lecture.pages} pages {done && '· مكتملة'}</span></span>{done && <Check size={16} className="shrink-0 text-[hsl(158_46%_35%)]" />}</button>; })}</div>
+    </aside> : <aside className="ink-card rounded-2xl p-6"><span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]"><BookOpen size={20} /></span><h2 className="display-font mt-5 text-lg font-bold">طريقة المراجعة</h2><ol className="mt-4 space-y-4 text-sm leading-7 text-[hsl(var(--muted-foreground))]"><li className="flex gap-3"><b className="font-mono text-[hsl(var(--primary))]">01</b><span>اقرأ العناوين أولاً لتكوين خريطة ذهنية.</span></li><li className="flex gap-3"><b className="font-mono text-[hsl(var(--primary))]">02</b><span>دوّن العلامات الفارقة والأرقام المهمة.</span></li><li className="flex gap-3"><b className="font-mono text-[hsl(var(--primary))]">03</b><span>اختبر نفسك من تبويب الأسئلة.</span></li></ol></aside>}
+  </div>;
 }
 
 function Explanation({ topic }: { topic: Topic }) {
