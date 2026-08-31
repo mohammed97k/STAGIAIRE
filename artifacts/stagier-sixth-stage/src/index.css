@@ -220,3 +220,469 @@
 @media (min-width: 768px) {
   .mobile-bottom-nav { display: none; }
 }
+
+/* Gastroenterology reading desk — a quieter, editorial layer inside the study app */
+.gastro-lectures {
+  --gastro-ink: #0F2942;
+  --gastro-teal: #2F9C95;
+  --gastro-teal-soft: #E4F2EF;
+  --gastro-paper: #FBFAF6;
+  --gastro-sand: #F3E9D7;
+  color: var(--gastro-ink);
+}
+.gastro-study-intro {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+  overflow: hidden;
+  position: relative;
+  padding: 2.25rem 2.3rem;
+  border-radius: 1.25rem;
+  background:
+    linear-gradient(135deg, rgba(15, 41, 66, .98), rgba(15, 41, 66, .92)),
+    repeating-linear-gradient(90deg, transparent 0 52px, rgba(255,255,255,.035) 53px 54px);
+  box-shadow: 0 18px 38px rgba(15, 41, 66, .14);
+  color: #F8F4EB;
+}
+.gastro-study-intro::after {
+  content: '';
+  position: absolute;
+  left: -3rem;
+  bottom: -5rem;
+  width: 16rem;
+  height: 16rem;
+  border: 1px solid rgba(79, 190, 178, .35);
+  border-radius: 50%;
+  box-shadow: 0 0 0 28px rgba(79, 190, 178, .04), 0 0 0 56px rgba(79, 190, 178, .035);
+}
+.gastro-study-intro > div:first-child { position: relative; z-index: 1; max-width: 45rem; }
+.gastro-overline {
+  display: block;
+  color: var(--gastro-teal);
+  font-family: var(--app-font-sans);
+  font-size: .66rem;
+  font-weight: 800;
+  letter-spacing: .16em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+.gastro-study-intro h2 {
+  margin: .7rem 0 0;
+  color: #F8F4EB;
+  font-family: var(--app-font-serif);
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  line-height: 1.5;
+}
+.gastro-study-intro p {
+  max-width: 40rem;
+  margin: .8rem 0 0;
+  color: rgba(248, 244, 235, .7);
+  font-size: .9rem;
+  line-height: 2;
+  direction: rtl;
+  text-align: right;
+}
+.gastro-intro-stat {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  gap: .55rem;
+  min-width: 8rem;
+  padding-bottom: .15rem;
+  color: rgba(248, 244, 235, .68);
+  font-size: .66rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  line-height: 1.45;
+  text-transform: uppercase;
+}
+.gastro-intro-stat strong {
+  color: var(--gastro-teal);
+  font-family: var(--app-font-mono);
+  font-size: 3.4rem;
+  font-weight: 500;
+  letter-spacing: -.08em;
+  line-height: .8;
+}
+.gastro-lecture-list {
+  margin-top: 1.4rem;
+  overflow: hidden;
+  border: 1px solid rgba(15, 41, 66, .12);
+  border-radius: 1.25rem;
+  background: rgba(251, 250, 246, .9);
+  box-shadow: 0 14px 35px rgba(15, 41, 66, .055);
+}
+.gastro-list-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.35rem 1.5rem 1.15rem;
+  border-bottom: 1px solid rgba(15, 41, 66, .11);
+}
+.gastro-list-heading h3 {
+  margin: .35rem 0 0;
+  font-family: var(--app-font-sans);
+  font-size: 1.12rem;
+  font-weight: 800;
+  letter-spacing: -.025em;
+}
+.gastro-list-count {
+  padding: .4rem .65rem;
+  border-radius: 999px;
+  background: var(--gastro-teal-soft);
+  color: var(--gastro-ink);
+  font-family: var(--app-font-mono);
+  font-size: .68rem;
+  font-weight: 700;
+}
+.gastro-rows { padding: .45rem .7rem .7rem; }
+.gastro-lecture-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-height: 4.65rem;
+  padding: .75rem .8rem .75rem .9rem;
+  border-bottom: 1px solid rgba(15, 41, 66, .08);
+  border-radius: .75rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color .2s ease, transform .2s ease, border-color .2s ease;
+}
+.gastro-lecture-row:last-child { border-bottom: 0; }
+.gastro-lecture-row:hover,
+.gastro-lecture-row:focus-visible {
+  position: relative;
+  z-index: 1;
+  background: var(--gastro-teal-soft);
+  border-color: rgba(47, 156, 149, .25);
+  outline: none;
+  transform: translateX(-3px);
+}
+.gastro-lecture-row.is-complete { background: rgba(228, 242, 239, .34); }
+.gastro-row-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 2.7rem;
+  height: 2.7rem;
+  border-radius: .7rem;
+  background: var(--gastro-ink);
+  color: #F8F4EB;
+  font-family: var(--app-font-mono);
+  font-size: .7rem;
+  letter-spacing: .04em;
+}
+.gastro-row-copy { display: block; min-width: 0; flex: 1; }
+.gastro-row-title {
+  display: block;
+  overflow: hidden;
+  color: var(--gastro-ink);
+  font-size: .93rem;
+  font-weight: 800;
+  line-height: 1.45;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.gastro-row-meta {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  margin-top: .3rem;
+  color: #71818C;
+  font-family: var(--app-font-sans);
+  font-size: .66rem;
+  font-weight: 600;
+}
+.gastro-row-meta i { width: 3px; height: 3px; border-radius: 50%; background: var(--gastro-teal); }
+.gastro-row-actions { display: flex; align-items: center; gap: .55rem; }
+.gastro-download {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid rgba(15, 41, 66, .12);
+  border-radius: .65rem;
+  color: var(--gastro-ink);
+  transition: background-color .2s ease, color .2s ease, transform .2s ease;
+}
+.gastro-download:hover { background: var(--gastro-ink); color: #F8F4EB; transform: translateY(-2px); }
+.gastro-complete-mark { color: var(--gastro-teal); }
+.gastro-row-arrow { color: #93A0A5; transition: transform .2s ease, color .2s ease; }
+.gastro-lecture-row:hover .gastro-row-arrow { color: var(--gastro-ink); transform: translateX(-3px); }
+
+.gastro-reader {
+  --gastro-ink: #0F2942;
+  --gastro-teal: #2F9C95;
+  --gastro-teal-soft: #E4F2EF;
+  --gastro-paper: #FBFAF6;
+  --gastro-sand: #F3E9D7;
+  margin: -1rem -1rem 0;
+  overflow: hidden;
+  background: var(--gastro-paper);
+  color: var(--gastro-ink);
+  direction: ltr;
+}
+.gastro-reader-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  min-height: 5.2rem;
+  padding: .7rem clamp(1rem, 4vw, 3rem);
+  background: var(--gastro-ink);
+  color: #F8F4EB;
+}
+.gastro-reader-brand { display: flex; align-items: center; gap: .7rem; }
+.gastro-reader-logo {
+  width: 2.9rem;
+  height: 2.9rem;
+  border: 2px solid rgba(248, 244, 235, .72);
+  border-radius: .8rem;
+  object-fit: cover;
+}
+.gastro-reader-brand-text {
+  width: 8.6rem;
+  height: 2.85rem;
+  padding: .2rem .45rem;
+  border-radius: .45rem;
+  background: #F8F4EB;
+  object-fit: contain;
+}
+.gastro-reader-brand-label {
+  padding-left: .8rem;
+  border-left: 1px solid rgba(248, 244, 235, .26);
+  color: rgba(248, 244, 235, .6);
+  font-family: var(--app-font-mono);
+  font-size: .58rem;
+  letter-spacing: .1em;
+}
+.gastro-reader-header-meta {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  color: rgba(248, 244, 235, .62);
+  font-family: var(--app-font-mono);
+  font-size: .61rem;
+  letter-spacing: .1em;
+}
+.gastro-reader-header-lecture {
+  display: flex;
+  flex-direction: column;
+  gap: .18rem;
+  max-width: min(34rem, 48vw);
+  text-align: right;
+}
+.gastro-reader-header-lecture span {
+  color: var(--gastro-teal);
+  font-size: .58rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+}
+.gastro-reader-header-lecture strong {
+  overflow: hidden;
+  color: #F8F4EB;
+  font-family: var(--app-font-sans);
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.gastro-reader-header-meta b { color: var(--gastro-teal); font-weight: 600; }
+.gastro-reader-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .85rem clamp(1rem, 4vw, 3rem);
+  border-bottom: 1px solid rgba(15, 41, 66, .1);
+  background: rgba(248, 244, 235, .86);
+}
+.gastro-reader-back,
+.gastro-print-button,
+.gastro-reader-complete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .45rem;
+  min-height: 2.45rem;
+  border-radius: .65rem;
+  font-size: .72rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background-color .2s ease, color .2s ease, transform .2s ease;
+}
+.gastro-reader-back {
+  padding: .45rem .3rem;
+  border: 0;
+  background: transparent;
+  color: #61717D;
+}
+.gastro-reader-back:hover { color: var(--gastro-ink); transform: translateX(3px); }
+.gastro-reader-actions { display: flex; align-items: center; gap: .55rem; }
+.gastro-print-button {
+  padding: .45rem .75rem;
+  border: 1px solid rgba(15, 41, 66, .13);
+  background: transparent;
+  color: var(--gastro-ink);
+}
+.gastro-print-button:hover { background: var(--gastro-sand); }
+.gastro-reader-complete {
+  padding: .45rem .85rem;
+  border: 1px solid var(--gastro-ink);
+  background: var(--gastro-ink);
+  color: #F8F4EB;
+}
+.gastro-reader-complete:hover { background: #173E5E; transform: translateY(-2px); }
+.gastro-reader-complete.is-complete { border-color: var(--gastro-teal); background: var(--gastro-teal); color: var(--gastro-ink); }
+.gastro-reader-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 15.5rem;
+  gap: clamp(2rem, 6vw, 6rem);
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: clamp(2rem, 5vw, 4.5rem) clamp(1rem, 4vw, 3rem) 5rem;
+}
+.gastro-reader-main { max-width: 710px; }
+.gastro-reader-kicker {
+  color: var(--gastro-teal);
+  font-family: var(--app-font-mono);
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .11em;
+  line-height: 1.6;
+  text-transform: uppercase;
+}
+.gastro-reader-main h1 {
+  max-width: 680px;
+  margin: .8rem 0 1rem;
+  color: var(--gastro-ink);
+  font-family: var(--app-font-sans);
+  font-size: clamp(1.75rem, 4.3vw, 3.25rem);
+  font-weight: 800;
+  letter-spacing: -.045em;
+  line-height: 1.17;
+}
+.gastro-reader-lede {
+  max-width: 620px;
+  margin: 0;
+  color: #526671;
+  font-size: 1rem;
+  line-height: 2;
+}
+.gastro-reader-rule { width: 100%; height: 1px; margin: 2rem 0 2.4rem; background: rgba(15, 41, 66, .15); }
+.gastro-reader-section { margin-top: 2.6rem; }
+.gastro-section-heading { display: flex; align-items: flex-start; gap: 1rem; }
+.gastro-section-heading > span {
+  padding-top: .12rem;
+  color: var(--gastro-teal);
+  font-family: var(--app-font-mono);
+  font-size: .8rem;
+  font-weight: 700;
+}
+.gastro-section-heading small {
+  display: block;
+  color: #89979C;
+  font-family: var(--app-font-mono);
+  font-size: .62rem;
+  letter-spacing: .12em;
+}
+.gastro-section-heading h2 { margin: .35rem 0 0; font-family: var(--app-font-serif); font-size: 1.4rem; line-height: 1.5; }
+.gastro-objectives {
+  display: grid;
+  gap: .85rem;
+  margin: 1.35rem 0 0 2.25rem;
+  padding: 1.2rem 1.35rem;
+  border-left: 2px solid var(--gastro-teal);
+  background: rgba(228, 242, 239, .42);
+}
+.gastro-objectives p { display: flex; align-items: flex-start; gap: .65rem; margin: 0; color: #405866; font-size: .84rem; line-height: 1.75; }
+.gastro-objectives svg { flex: 0 0 auto; margin-top: .22rem; color: var(--gastro-teal); }
+.gastro-note-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin: 1.35rem 0 0 2.25rem; }
+.gastro-note-box { min-height: 15rem; padding: 1.35rem; border: 1px solid rgba(15, 41, 66, .09); border-top: 3px solid var(--gastro-teal); background: rgba(255, 255, 255, .33); }
+.gastro-note-box.sand { border-top-color: #C99652; background: rgba(243, 233, 215, .55); }
+.gastro-note-box.navy { border-top-color: var(--gastro-ink); background: rgba(15, 41, 66, .055); }
+.gastro-box-label { color: #91A0A4; font-family: var(--app-font-mono); font-size: .65rem; font-weight: 700; }
+.gastro-note-box h3 { margin: .55rem 0 .9rem; font-size: 1rem; font-weight: 800; }
+.gastro-note-box ul { display: grid; gap: .75rem; margin: 0; padding: 0; list-style: none; }
+.gastro-note-box li { position: relative; padding-left: .9rem; color: #526671; font-size: .8rem; line-height: 1.8; }
+.gastro-note-box li::before { content: ''; position: absolute; left: 0; top: .7rem; width: 4px; height: 4px; border-radius: 50%; background: var(--gastro-teal); }
+.gastro-takeaway {
+  margin: 2.8rem 0 0 2.25rem;
+  padding: 1.5rem 1.6rem;
+  border: 1px solid rgba(47, 156, 149, .27);
+  border-radius: .85rem;
+  background: var(--gastro-teal-soft);
+}
+.gastro-takeaway > span { color: #277B75; font-family: var(--app-font-mono); font-size: .63rem; font-weight: 800; letter-spacing: .12em; }
+.gastro-takeaway p { margin: .65rem 0 0; color: var(--gastro-ink); font-family: var(--app-font-serif); font-size: 1.04rem; line-height: 1.9; }
+.gastro-reader-aside { padding-top: 4.8rem; }
+.gastro-aside-card { padding: 1.15rem; border: 1px solid rgba(15, 41, 66, .11); background: rgba(255, 255, 255, .3); }
+.gastro-aside-index { border-top: 3px solid var(--gastro-teal); }
+.gastro-aside-line { display: flex; align-items: center; gap: .7rem; padding: .8rem 0 0; color: #89979C; font-size: .72rem; }
+.gastro-aside-line b { color: #AAB6B7; font-family: var(--app-font-mono); font-size: .62rem; font-weight: 600; }
+.gastro-aside-line.is-active { color: var(--gastro-ink); font-weight: 800; }
+.gastro-aside-line.is-active b { color: var(--gastro-teal); }
+.gastro-aside-meta { display: grid; gap: 1rem; margin-top: 1rem; }
+.gastro-aside-meta > div { display: flex; justify-content: space-between; gap: .5rem; color: #89979C; font-size: .66rem; }
+.gastro-aside-meta b { color: var(--gastro-ink); font-family: var(--app-font-mono); font-size: .62rem; font-weight: 600; text-align: right; }
+.gastro-aside-quote { margin-top: 1.4rem; padding: 1.1rem .2rem 0; color: #72838A; font-family: var(--app-font-serif); font-size: .83rem; line-height: 1.9; }
+.gastro-aside-quote span { display: block; margin-top: .6rem; color: var(--gastro-teal); font-family: var(--app-font-mono); font-size: .56rem; line-height: 1.5; }
+
+@media (max-width: 767px) {
+  .gastro-study-intro { align-items: flex-start; flex-direction: column; gap: 1.35rem; padding: 1.55rem 1.35rem 1.7rem; }
+  .gastro-intro-stat { min-width: 0; }
+  .gastro-intro-stat strong { font-size: 2.65rem; }
+  .gastro-list-heading { padding-inline: 1rem; }
+  .gastro-rows { padding-inline: .35rem; }
+  .gastro-lecture-row { gap: .65rem; padding-inline: .45rem; }
+  .gastro-row-number { flex-basis: 2.35rem; height: 2.35rem; }
+  .gastro-row-title { white-space: normal; }
+  .gastro-row-meta { font-size: .6rem; }
+  .gastro-row-actions { gap: .25rem; }
+  .gastro-row-arrow { display: none; }
+  .gastro-reader { margin: -1rem -1.25rem 0; }
+  .gastro-reader-header { align-items: flex-start; flex-direction: column; gap: .7rem; padding: .8rem 1rem 1rem; }
+  .gastro-reader-brand-label { display: none; }
+  .gastro-reader-header-meta { width: 100%; justify-content: space-between; padding-left: 3.6rem; }
+  .gastro-reader-header-lecture { max-width: calc(100vw - 8rem); }
+  .gastro-reader-header-lecture strong { font-size: .72rem; }
+  .gastro-reader-toolbar { align-items: stretch; flex-direction: column; padding: .65rem 1rem; }
+  .gastro-reader-actions { width: 100%; }
+  .gastro-print-button, .gastro-reader-complete { flex: 1; }
+  .gastro-reader-page { display: block; padding: 2.2rem 1rem 4rem; }
+  .gastro-reader-main h1 { font-size: 2rem; }
+  .gastro-reader-lede { font-size: .9rem; }
+  .gastro-reader-rule { margin: 1.5rem 0 2rem; }
+  .gastro-objectives, .gastro-note-grid, .gastro-takeaway { margin-left: 0; }
+  .gastro-note-grid { grid-template-columns: 1fr; }
+  .gastro-note-box { min-height: auto; }
+  .gastro-reader-aside { display: none; }
+}
+
+@page { size: A4; margin: 14mm; }
+@media print {
+  html, body { background: #FBFAF6 !important; }
+  body { min-width: 0; }
+  .app-shell > header, .mobile-bottom-nav, .gastro-no-print { display: none !important; }
+  .app-shell { padding-bottom: 0 !important; background: #FBFAF6 !important; }
+  .gastro-reader { margin: 0; overflow: visible; background: #FBFAF6; }
+  .gastro-reader-header { min-height: 3.7rem; padding: 0 0 1rem; background: #0F2942; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .gastro-reader-logo { width: 2.25rem; height: 2.25rem; }
+  .gastro-reader-brand-text { height: 2.2rem; }
+  .gastro-reader-page { display: block; max-width: none; padding: 1.4rem 0 0; }
+  .gastro-reader-main { max-width: none; }
+  .gastro-reader-main h1 { max-width: none; font-size: 26pt; }
+  .gastro-reader-lede { max-width: none; font-size: 10.5pt; }
+  .gastro-reader-section { break-inside: avoid; margin-top: 1.7rem; }
+  .gastro-note-grid { break-inside: avoid; }
+  .gastro-note-box { min-height: 0; padding: 1rem; }
+  .gastro-note-box li, .gastro-objectives p { font-size: 9pt; line-height: 1.55; }
+  .gastro-takeaway { break-inside: avoid; margin-top: 1.7rem; }
+  .gastro-reader-aside { display: none; }
+}

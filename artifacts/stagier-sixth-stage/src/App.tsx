@@ -6,7 +6,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import {
   ArrowLeft, BookOpen, Bookmark, Check, ChevronLeft, CircleHelp,
   ClipboardCheck, Clock3, Download, FileText, HeartPulse, Home as HomeIcon, Lightbulb,
-  ListFilter, PlayCircle, Search, Star, Stethoscope, Target, X,
+  ListFilter, PlayCircle, Printer, Search, Star, Stethoscope, Target, X,
 } from 'lucide-react';
 import { Link, Route, Switch, useLocation, useParams, Router as WouterRouter } from 'wouter';
 
@@ -313,6 +313,10 @@ function Lectures({ topic, topicKey, completedIds, onComplete }: { topic: Topic;
   const selectedCompletionKey = selectedLecture ? `lecture:${topicKey}:${selectedLecture.id}` : '';
   const selectedCompleted = selectedCompletionKey ? completedIds.includes(selectedCompletionKey) : false;
 
+  if (topic.id === 'gastroenterology') {
+    return <GastroLectures topic={topic} topicKey={topicKey} completedIds={completedIds} onComplete={onComplete} />;
+  }
+
   return <div className="grid gap-6 lg:grid-cols-[1.35fr_.65fr]">
     <div className="overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(213_42%_18%)] shadow-lg">
       <div className="flex items-center justify-between border-b border-white/10 px-5 py-4 text-white">
@@ -332,6 +336,260 @@ function Lectures({ topic, topicKey, completedIds, onComplete }: { topic: Topic;
       <div className="space-y-2">{lectures.map((lecture, index) => { const done = completedIds.includes(`lecture:${topicKey}:${lecture.id}`); const active = selectedLecture?.id === lecture.id; return <button type="button" key={lecture.id} onClick={() => setSelectedId(lecture.id)} data-testid={`card-lecture-${lecture.id}`} className={`flex w-full items-center gap-3 rounded-xl border p-3 text-right transition ${active ? 'border-[hsl(var(--primary)/.45)] bg-[hsl(var(--secondary)/.75)]' : 'border-transparent hover:border-[hsl(var(--border))] hover:bg-[hsl(var(--secondary)/.45)]'}`}><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[hsl(var(--secondary))] font-mono text-xs font-bold text-[hsl(var(--primary))]">{String(index + 1).padStart(2, '0')}</span><span className="min-w-0 flex-1"><span className="block truncate text-sm font-bold">{lecture.title}</span><span className="mt-1 block text-[11px] text-[hsl(var(--muted-foreground))]">{lecture.pages} pages {done && '· مكتملة'}</span></span>{done && <Check size={16} className="shrink-0 text-[hsl(158_46%_35%)]" />}</button>; })}</div>
     </aside> : <aside className="ink-card rounded-2xl p-6"><span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]"><BookOpen size={20} /></span><h2 className="display-font mt-5 text-lg font-bold">طريقة المراجعة</h2><ol className="mt-4 space-y-4 text-sm leading-7 text-[hsl(var(--muted-foreground))]"><li className="flex gap-3"><b className="font-mono text-[hsl(var(--primary))]">01</b><span>اقرأ العناوين أولاً لتكوين خريطة ذهنية.</span></li><li className="flex gap-3"><b className="font-mono text-[hsl(var(--primary))]">02</b><span>دوّن العلامات الفارقة والأرقام المهمة.</span></li><li className="flex gap-3"><b className="font-mono text-[hsl(var(--primary))]">03</b><span>اختبر نفسك من تبويب الأسئلة.</span></li></ol></aside>}
   </div>;
+}
+
+type GastroNoteBox = { label: string; title: string; items: string[]; tone?: 'teal' | 'sand' | 'navy' };
+type GastroNote = {
+  kicker: string;
+  summary: string;
+  objectives: string[];
+  boxes: GastroNoteBox[];
+  takeaway: string;
+};
+
+const gastroNotes: Record<string, GastroNote> = {
+  'gastro-lec-01': {
+    kicker: 'Foundation · functional anatomy',
+    summary: 'A working map of the gastrointestinal tract: how structure, motility, secretion, digestion, and absorption cooperate from mouth to colon.',
+    objectives: ['Trace the wall layers and enteric nervous system.', 'Relate each segment to its dominant function.', 'Recognise the vascular and lymphatic routes that matter clinically.'],
+    boxes: [
+      { label: '01', title: 'Route & roles', tone: 'teal', items: ['Stomach: reservoir, acid barrier, and initial protein digestion.', 'Small bowel: most digestion and nutrient absorption.', 'Colon: water recovery, fermentation, and stool storage.'] },
+      { label: '02', title: 'Clinical anchor', tone: 'sand', items: ['Pain location follows embryologic origin and distension.', 'The mucosa renews rapidly, making it vulnerable to ischemia and cytotoxic injury.', 'Barrier failure turns a local problem into systemic inflammation.'] },
+    ],
+    takeaway: 'When a symptom is vague, first place it on the map: segment, layer, function, then likely mechanism.',
+  },
+  'gastro-lec-02': {
+    kicker: 'Approach · investigations',
+    summary: 'Choose investigations by the question you need answered, not by habit. Start with severity, anatomy, and the probability of changing management.',
+    objectives: ['Separate screening, diagnosis, staging, and monitoring.', 'Match endoscopy, imaging, and laboratory tests to their strengths.', 'Interpret a test in the context of pre-test probability.'],
+    boxes: [
+      { label: '01', title: 'First pass', tone: 'teal', items: ['CBC, electrolytes, liver profile, inflammatory markers, and targeted stool tests frame urgency.', 'Endoscopy answers a mucosal question and permits biopsy or therapy.', 'Ultrasound, CT, and MRI answer different anatomical and complication questions.'] },
+      { label: '02', title: 'Do not miss', tone: 'navy', items: ['Check haemodynamic stability before arranging a test.', 'A normal result does not erase a high-risk clinical picture.', 'Always ask: will this result change what I do today?'] },
+    ],
+    takeaway: 'The best investigation is the one that reduces uncertainty at the safest cost in time, risk, and delay.',
+  },
+  'gastro-lec-03': {
+    kicker: 'Esophagus · motility and reflux',
+    summary: 'GERD and achalasia can both produce dysphagia or chest discomfort, but their mechanisms and first-line pathways are fundamentally different.',
+    objectives: ['Identify the reflux barrier and mechanisms of GERD.', 'Distinguish mechanical from motility-related dysphagia.', 'Recognise when endoscopy or manometry is required.'],
+    boxes: [
+      { label: '01', title: 'GERD pattern', tone: 'teal', items: ['Typical heartburn and regurgitation may respond to an empiric acid-suppression trial.', 'Alarm features—dysphagia, bleeding, weight loss, anaemia—move the patient to endoscopy.', 'Lifestyle measures support treatment but do not replace risk assessment.'] },
+      { label: '02', title: 'Achalasia pattern', tone: 'sand', items: ['Failure of lower oesophageal sphincter relaxation causes progressive dysphagia to solids and liquids.', 'Barium swallow may show a bird-beak appearance; manometry confirms the diagnosis.', 'Treatment is aimed at disrupting the non-relaxing sphincter.'] },
+    ],
+    takeaway: 'Dysphagia to solids first suggests obstruction; dysphagia to solids and liquids from the start suggests a motility disorder.',
+  },
+  'gastro-lec-04': {
+    kicker: 'Stomach · mucosal injury',
+    summary: 'Gastritis is a pattern of mucosal inflammation, while H. pylori is a treatable cause with consequences that extend from dyspepsia to ulcer and malignancy risk.',
+    objectives: ['Separate acute erosive injury from chronic gastritis.', 'Understand the H. pylori–ulcer–cancer relationship.', 'Use alarm features to guide endoscopic assessment.'],
+    boxes: [
+      { label: '01', title: 'Common drivers', tone: 'teal', items: ['NSAIDs weaken mucosal defence and can cause erosions or ulceration.', 'H. pylori changes the gastric environment and may persist silently.', 'Stress-related injury is mainly a concern in critically ill patients.'] },
+      { label: '02', title: 'Practical plan', tone: 'navy', items: ['Test and treat H. pylori when the clinical context supports it.', 'Review NSAID exposure, bleeding risk, and acid suppression.', 'Confirm eradication when indicated rather than assuming treatment worked.'] },
+    ],
+    takeaway: 'Do not label every upper abdominal symptom as gastritis; identify the cause and the patient’s bleeding or cancer risk.',
+  },
+  'gastro-lec-05': {
+    kicker: 'Small bowel · malabsorption',
+    summary: 'Malabsorption is a syndrome, not a diagnosis. Localise the problem to digestion, mucosal uptake, transport, or lymphatic delivery.',
+    objectives: ['Recognise the clinical pattern of malabsorption.', 'Build a focused differential for coeliac disease.', 'Use serology and biopsy in the correct sequence.'],
+    boxes: [
+      { label: '01', title: 'Clues', tone: 'teal', items: ['Weight loss, bulky stools, anaemia, low albumin, and vitamin deficiencies suggest impaired absorption.', 'Iron, folate, B12, calcium, and fat-soluble vitamins point toward extent and site.', 'A diet history is part of the diagnostic test.'] },
+      { label: '02', title: 'Coeliac checkpoint', tone: 'sand', items: ['Test while the patient is still consuming gluten when possible.', 'Tissue transglutaminase IgA is paired with total IgA.', 'Duodenal biopsy and clinical response complete the diagnosis in the right context.'] },
+    ],
+    takeaway: 'The pattern of deficiency often tells you more about the affected bowel segment than the stool description alone.',
+  },
+  'gastro-lec-06': {
+    kicker: 'Small bowel · bacterial overgrowth',
+    summary: 'SIBO is a consequence of altered anatomy or motility. Treat the driver as well as the overgrowth, or recurrence is likely.',
+    objectives: ['Recognise risk factors for stasis and bacterial proliferation.', 'Connect SIBO to bloating, diarrhoea, and nutrient deficiency.', 'Avoid mistaking a positive breath test for the whole diagnosis.'],
+    boxes: [
+      { label: '01', title: 'Why it happens', tone: 'teal', items: ['Blind loops, strictures, diverticula, and slow transit create bacterial reservoirs.', 'Bacteria consume nutrients and deconjugate bile acids.', 'B12 deficiency can occur with prolonged or severe disease.'] },
+      { label: '02', title: 'Whipple disease', tone: 'navy', items: ['Think of it with weight loss, diarrhoea, arthralgia, lymphadenopathy, or neurological features.', 'Small-bowel biopsy with appropriate testing is central to diagnosis.', 'Antibiotic therapy must account for tissue and CNS penetration.'] },
+    ],
+    takeaway: 'Recurrent bloating deserves a mechanism-based assessment: motility, anatomy, medication, and diet all matter.',
+  },
+  'gastro-lec-07': {
+    kicker: 'Functional bowel · IBS',
+    summary: 'IBS is a disorder of gut–brain interaction diagnosed positively from a characteristic symptom pattern while screening for red flags.',
+    objectives: ['Use recurrent abdominal pain and stool change to recognise IBS.', 'Identify alarm features and useful baseline tests.', 'Explain the role of diet, fibre, and gut-directed therapy.'],
+    boxes: [
+      { label: '01', title: 'Positive diagnosis', tone: 'teal', items: ['Pain related to defecation or associated with a change in stool frequency or form is central.', 'Bloating and urgency are common but not specific.', 'A normal examination and reassuring pattern are therapeutic information.'] },
+      { label: '02', title: 'Red flags', tone: 'sand', items: ['Bleeding, iron-deficiency anaemia, nocturnal symptoms, fever, weight loss, and family history need a different pathway.', 'Avoid a broad, repeated test cascade without a clinical reason.', 'Shared decisions improve adherence to diet and symptom management.'] },
+    ],
+    takeaway: 'Validate the symptoms, name the pattern, and give the patient a plan they can actually follow.',
+  },
+  'gastro-lec-08': {
+    kicker: 'Stomach & duodenum · ulcer disease',
+    summary: 'Peptic ulcer disease reflects an imbalance between mucosal defence and acid–peptic injury, most often driven by H. pylori or NSAIDs.',
+    objectives: ['Describe the major causes of peptic ulceration.', 'Recognise ulcer complications early.', 'Link treatment to the cause and confirm healing when needed.'],
+    boxes: [
+      { label: '01', title: 'Risk frame', tone: 'teal', items: ['Ask specifically about NSAIDs, aspirin, steroids, anticoagulants, and previous ulcer disease.', 'H. pylori testing changes long-term recurrence risk.', 'Gastric ulcers deserve attention to biopsy and follow-up.'] },
+      { label: '02', title: 'Clinical signal', tone: 'navy', items: ['Epigastric pain can be absent in bleeding or perforation.', 'Sudden severe pain with guarding suggests perforation until proven otherwise.', 'Haematemesis, melena, or syncope changes the urgency immediately.'] },
+    ],
+    takeaway: 'Treat the acid injury, remove the cause, and never let a symptom response substitute for risk assessment.',
+  },
+  'gastro-lec-09': {
+    kicker: 'Ulcer complications · dyspepsia',
+    summary: 'Bleeding, perforation, obstruction, Zollinger–Ellison syndrome, and dyspepsia each require a different level of urgency and a different question.',
+    objectives: ['Triage the major complications of peptic ulcer disease.', 'Recognise clues to gastrinoma and acid hypersecretion.', 'Use a safe, structured dyspepsia pathway.'],
+    boxes: [
+      { label: '01', title: 'Complication lens', tone: 'teal', items: ['Bleeding: resuscitate, risk-stratify, and arrange therapeutic endoscopy.', 'Perforation: urgent surgical assessment after initial stabilisation.', 'Gastric outlet obstruction: look for persistent vomiting, dehydration, and retained food.'] },
+      { label: '02', title: 'ZES clue', tone: 'sand', items: ['Refractory or multiple ulcers, diarrhoea, and ulcers beyond the duodenal bulb raise suspicion.', 'Fasting gastrin is interpreted with gastric acidity and medication context.', 'Think about MEN1 when the wider clinical picture fits.'] },
+    ],
+    takeaway: 'Dyspepsia is common; complication physiology is not. Let instability and red flags set the pace.',
+  },
+  'gastro-lec-10': {
+    kicker: 'Upper GI oncology',
+    summary: 'Upper gastrointestinal tumours present late surprisingly often. A disciplined approach to alarm symptoms, staging, and nutrition changes the course.',
+    objectives: ['Recognise presentations that require prompt endoscopy.', 'Differentiate tissue diagnosis from staging.', 'Include nutrition and performance status in the initial plan.'],
+    boxes: [
+      { label: '01', title: 'Alarm features', tone: 'teal', items: ['Progressive dysphagia, weight loss, anaemia, bleeding, persistent vomiting, and a palpable mass need urgent evaluation.', 'Biopsy establishes histology; imaging establishes spread and resectability.', 'Do not delay referral while pursuing low-yield symptomatic treatment.'] },
+      { label: '02', title: 'Whole-patient care', tone: 'navy', items: ['Assess intake, weight trajectory, and swallowing safety early.', 'Multidisciplinary planning aligns surgery, oncology, radiology, and nutrition.', 'Staging is a decision tool, not just a number.'] },
+    ],
+    takeaway: 'For suspected upper GI cancer, the first goal is not to name the stage—it is to secure tissue, map disease, and protect the patient’s reserve.',
+  },
+  'gastro-lec-11': {
+    kicker: 'IBD · Crohn disease',
+    summary: 'Crohn disease is a transmural, discontinuous inflammatory process that can affect any part of the gastrointestinal tract and produce penetrating or stricturing complications.',
+    objectives: ['Recognise the clinical spectrum of Crohn disease.', 'Separate inflammatory, stricturing, and penetrating behaviour.', 'Choose investigations that show both mucosa and bowel wall.'],
+    boxes: [
+      { label: '01', title: 'Pattern', tone: 'teal', items: ['Skip lesions, ileocaecal disease, perianal disease, and extraintestinal features are useful clues.', 'Diarrhoea, pain, weight loss, and fatigue may be subtle between flares.', 'Smoking worsens disease course and should be addressed directly.'] },
+      { label: '02', title: 'Complication watch', tone: 'sand', items: ['Obstructive symptoms suggest a stricture; fever and a tender mass suggest abscess.', 'Cross-sectional imaging complements ileocolonoscopy.', 'Treat malnutrition and infection risk before escalating immunosuppression.'] },
+    ],
+    takeaway: 'Name the phenotype before choosing treatment: inflammation, narrowing, fistula, and abscess are not interchangeable.',
+  },
+  'gastro-lec-12': {
+    kicker: 'IBD · ulcerative colitis',
+    summary: 'Ulcerative colitis begins in the rectum and extends proximally in a continuous pattern. Severity is defined by stool, bleeding, systemic impact, and objective inflammation.',
+    objectives: ['Recognise the continuous distribution of ulcerative colitis.', 'Assess severity and acute severe colitis.', 'Build a maintenance and surveillance mindset.'],
+    boxes: [
+      { label: '01', title: 'Clinical pattern', tone: 'teal', items: ['Bloody diarrhoea, urgency, tenesmus, and nocturnal stool are characteristic.', 'Extent and activity should be documented objectively.', 'Extraintestinal manifestations may track with bowel activity—or not.'] },
+      { label: '02', title: 'Safety first', tone: 'navy', items: ['Acute severe colitis requires admission, infection exclusion, thromboprophylaxis, and early specialist input.', 'Avoid delay when systemic toxicity, tachycardia, or abdominal distension appears.', 'Long-term surveillance depends on duration, extent, and inflammatory burden.'] },
+    ],
+    takeaway: 'In IBD, the patient’s trajectory and objective inflammation matter more than a single reassuring symptom day.',
+  },
+  'gastro-lec-13': {
+    kicker: 'Colon · polyps and cancer',
+    summary: 'Colorectal cancer prevention is a story of adenoma biology, inherited risk, timely colonoscopy, and recognising symptoms before they become obstruction.',
+    objectives: ['Understand the adenoma–carcinoma sequence.', 'Use family history and polyp features to frame risk.', 'Recognise the common presentations of colorectal cancer.'],
+    boxes: [
+      { label: '01', title: 'Risk signals', tone: 'teal', items: ['Age, family history, inherited syndromes, inflammatory bowel disease, and lifestyle shape risk.', 'Iron-deficiency anaemia may be the first clue to an occult right-sided lesion.', 'Change in bowel habit, bleeding, and weight loss need context—not dismissal.'] },
+      { label: '02', title: 'Polyp logic', tone: 'sand', items: ['Number, size, histology, and dysplasia determine surveillance.', 'Complete resection and a high-quality examination are essential.', 'Screening is prevention when it finds and removes a precursor lesion.'] },
+    ],
+    takeaway: 'The colonoscopy is not just looking for cancer; it is interrupting the pathway that creates it.',
+  },
+  'gastro-lec-14': {
+    kicker: 'Emergency · upper GI bleeding',
+    summary: 'Upper GI bleeding is a resuscitation problem before it is an endoscopy problem. Stabilise first, then identify and treat the source.',
+    objectives: ['Assess shock and ongoing blood loss rapidly.', 'Start a structured pre-endoscopy bundle.', 'Know when rebleeding requires escalation.'],
+    boxes: [
+      { label: '01', title: 'First minutes', tone: 'teal', items: ['Airway, breathing, circulation, large-bore access, blood tests, and crossmatch come first.', 'Review anticoagulants, antiplatelets, liver disease, and previous bleeding.', 'Use haemodynamics and comorbidity—not haemoglobin alone—to guide urgency.'] },
+      { label: '02', title: 'Definitive control', tone: 'navy', items: ['Endoscopy provides diagnosis, risk stratification, and haemostasis.', 'High-risk stigmata need endoscopic therapy and appropriate acid suppression.', 'Rebleeding calls for repeat endoscopy, interventional radiology, or surgery according to the case.'] },
+    ],
+    takeaway: 'A calm, reproducible resuscitation sequence saves time when the history is incomplete and the bleeding is not.',
+  },
+  'gastro-lec-15': {
+    kicker: 'Pancreas · acute inflammation',
+    summary: 'Acute pancreatitis is diagnosed clinically and biochemically, then managed by repeated assessment of volume status, organ function, and the cause.',
+    objectives: ['Apply the diagnostic criteria for acute pancreatitis.', 'Identify biliary, alcohol-related, and other triggers.', 'Recognise early organ failure and evolving complications.'],
+    boxes: [
+      { label: '01', title: 'Diagnosis', tone: 'teal', items: ['Typical upper abdominal pain, a significant lipase or amylase rise, and characteristic imaging form the diagnostic triad.', 'Two of three criteria are usually enough.', 'Ultrasound looks for gallstones; CT is reserved for the right clinical question.'] },
+      { label: '02', title: 'Management rhythm', tone: 'sand', items: ['Give goal-directed fluids, analgesia, antiemetics, and early oral or enteral nutrition when appropriate.', 'Monitor oxygenation, urine output, renal function, and haematocrit.', 'Persistent organ failure defines severe disease and changes the care setting.'] },
+    ],
+    takeaway: 'Severity is dynamic. Reassess the patient’s physiology repeatedly rather than predicting the whole course from the first scan.',
+  },
+  'gastro-lec-16': {
+    kicker: 'Infection · acute diarrhoea',
+    summary: 'Most acute infectious diarrhoea is self-limited, but dehydration, dysentery, sepsis, travel, healthcare exposure, and host factors change the plan.',
+    objectives: ['Triage severity and dehydration at the bedside.', 'Use history to select stool testing and treatment.', 'Prevent transmission while treating the patient.'],
+    boxes: [
+      { label: '01', title: 'History that changes care', tone: 'teal', items: ['Ask about travel, food, sick contacts, antibiotics, outbreaks, immunosuppression, and blood in stool.', 'Duration and fever help separate common self-limited illness from invasive disease.', 'Consider public-health implications in clusters and healthcare-associated cases.'] },
+      { label: '02', title: 'Safe treatment', tone: 'navy', items: ['Oral rehydration is the centre of care; use IV fluids for shock or inability to drink.', 'Antibiotics are selective, not automatic, and depend on syndrome and host.', 'Hand hygiene, isolation advice, and safe food handling protect the next patient.'] },
+    ],
+    takeaway: 'In diarrhoea, the first prescription is fluid. The second is a targeted explanation of why this patient does—or does not—need more.',
+  },
+};
+
+function GastroLectures({ topic, topicKey, completedIds, onComplete }: { topic: Topic; topicKey: string; completedIds: string[]; onComplete: (lectureId: string) => void }) {
+  const lectures = topic.lectures ?? [];
+  const [readerId, setReaderId] = useState<string | null>(null);
+  const readerLecture = lectures.find((lecture) => lecture.id === readerId) ?? null;
+  useEffect(() => { setReaderId(null); }, [topic.id]);
+
+  if (readerLecture) {
+    return <GastroReader lecture={readerLecture} index={lectures.findIndex((lecture) => lecture.id === readerLecture.id)} total={lectures.length} completed={completedIds.includes(`lecture:${topicKey}:${readerLecture.id}`)} onComplete={() => onComplete(readerLecture.id)} onBack={() => setReaderId(null)} />;
+  }
+
+  return <section className="gastro-lectures" aria-label="Gastroenterology lecture reader">
+    <div className="gastro-study-intro">
+      <div>
+        <span className="gastro-overline">STAGIAIRE READER · GASTROENTEROLOGY</span>
+        <h2>اقرأ المحاضرة كخريطة، لا كملف.</h2>
+        <p>افتح أي محاضرة لصفحة قراءة مركّزة، ثم ارجع إلى القائمة من دون فقدان تقدّمك. يمكنك تنزيل ملف الـ PDF الأصلي من رمز التحميل.</p>
+      </div>
+      <div className="gastro-intro-stat"><strong>{String(lectures.length).padStart(2, '0')}</strong><span>lectures<br />in sequence</span></div>
+    </div>
+    <div className="gastro-lecture-list">
+      <div className="gastro-list-heading"><div><span className="gastro-overline">THE COMPLETE SET</span><h3>Gastroenterology lectures</h3></div><span className="gastro-list-count">{lectures.length} / 16</span></div>
+      <div className="gastro-rows">
+        {lectures.map((lecture, index) => {
+          const completed = completedIds.includes(`lecture:${topicKey}:${lecture.id}`);
+          return <div key={lecture.id} role="button" tabIndex={0} onClick={() => setReaderId(lecture.id)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setReaderId(lecture.id); } }} className={`gastro-lecture-row ${completed ? 'is-complete' : ''}`} data-testid={`card-lecture-${lecture.id}`}>
+            <span className="gastro-row-number">{String(index + 1).padStart(2, '0')}</span>
+            <span className="gastro-row-copy"><span className="gastro-row-title">{lecture.title}</span><span className="gastro-row-meta">{lecture.pages} pages <i /> {completed ? 'مكتملة' : 'Open HTML reader'}</span></span>
+            <span className="gastro-row-actions">
+              {completed && <Check size={16} className="gastro-complete-mark" aria-label="مكتملة" />}
+              <a href={lecture.pdf} download onClick={(event) => event.stopPropagation()} onKeyDown={(event) => event.stopPropagation()} aria-label={`Download ${lecture.title} PDF`} data-testid={`link-download-${lecture.id}`} className="gastro-download"><Download size={17} /></a>
+              <ArrowLeft size={18} className="gastro-row-arrow" aria-hidden="true" />
+            </span>
+          </div>;
+        })}
+      </div>
+    </div>
+  </section>;
+}
+
+function GastroReader({ lecture, index, total, completed, onComplete, onBack }: { lecture: Lecture; index: number; total: number; completed: boolean; onComplete: () => void; onBack: () => void }) {
+  const note = gastroNotes[lecture.id] ?? { kicker: 'Study note', summary: 'A focused reading page for this lecture.', objectives: [], boxes: [], takeaway: 'Return to the lecture list to continue.' };
+  return <article className="gastro-reader" dir="ltr" data-testid="gastro-reader">
+    <header className="gastro-reader-header">
+      <div className="gastro-reader-brand">
+        <img src="/logo.png" alt="شعار ستاجير" className="gastro-reader-logo" />
+        <img src="/brand_text.png" alt="ستاجير - كل ما تحتاجه في الطب" className="gastro-reader-brand-text" />
+        <span className="gastro-reader-brand-label">STUDY READER</span>
+      </div>
+      <div className="gastro-reader-header-meta"><div className="gastro-reader-header-lecture"><span>GASTROENTEROLOGY</span><strong>{lecture.title}</strong></div><b>{String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}</b></div>
+    </header>
+    <div className="gastro-reader-toolbar gastro-no-print">
+      <button type="button" onClick={onBack} className="gastro-reader-back"><ChevronLeft size={18} /> <span>Back to lecture list</span></button>
+      <div className="gastro-reader-actions">
+        <button type="button" onClick={() => window.print()} className="gastro-print-button"><Printer size={17} /> <span>Export PDF / A4</span></button>
+        <button type="button" onClick={onComplete} aria-pressed={completed} data-testid={`button-reader-complete-${lecture.id}`} className={`gastro-reader-complete ${completed ? 'is-complete' : ''}`}><Check size={17} /><span>{completed ? 'Completed' : 'Mark as Completed'}</span></button>
+      </div>
+    </div>
+    <div className="gastro-reader-page">
+      <div className="gastro-reader-main">
+        <div className="gastro-reader-kicker">{note.kicker}</div>
+        <h1>{lecture.title}</h1>
+        <p className="gastro-reader-lede">{note.summary}</p>
+        <div className="gastro-reader-rule" />
+        <section className="gastro-reader-section">
+          <div className="gastro-section-heading"><span>01</span><div><small>ORIENTATION</small><h2>What to carry forward</h2></div></div>
+          <div className="gastro-objectives">{note.objectives.map((objective) => <p key={objective}><Check size={15} />{objective}</p>)}</div>
+        </section>
+        <section className="gastro-reader-section">
+          <div className="gastro-section-heading"><span>02</span><div><small>CORE NOTES</small><h2>Build the clinical picture</h2></div></div>
+          <div className="gastro-note-grid">{note.boxes.map((box) => <div key={box.label} className={`gastro-note-box ${box.tone ?? 'teal'}`}><div className="gastro-box-label">{box.label}</div><h3>{box.title}</h3><ul>{box.items.map((item) => <li key={item}>{item}</li>)}</ul></div>)}</div>
+        </section>
+        <section className="gastro-takeaway"><span>CLINICAL TAKEAWAY</span><p>{note.takeaway}</p></section>
+      </div>
+      <aside className="gastro-reader-aside">
+        <div className="gastro-aside-card gastro-aside-index"><span className="gastro-overline">IN THIS READER</span><div className="gastro-aside-line is-active"><b>01</b><span>Orientation</span></div><div className="gastro-aside-line"><b>02</b><span>Core notes</span></div><div className="gastro-aside-line"><b>03</b><span>Clinical takeaway</span></div></div>
+        <div className="gastro-aside-card gastro-aside-meta"><span className="gastro-overline">LECTURE DETAILS</span><div><span>Sequence</span><b>{String(index + 1).padStart(2, '0')} of {total}</b></div><div><span>Source pages</span><b>{lecture.pages} pages</b></div><div><span>Format</span><b>HTML notes</b></div></div>
+        <div className="gastro-aside-quote">“Small, clear passes beat one long, anxious read.”<span>— Stagiaire study desk</span></div>
+      </aside>
+    </div>
+  </article>;
 }
 
 function Explanation({ topic }: { topic: Topic }) {
