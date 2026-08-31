@@ -13,7 +13,7 @@ import { Link, Route, Switch, useLocation, useParams, Router as WouterRouter } f
 type Accent = 'navy' | 'green' | 'orange' | 'purple';
 type Branch = 'theory' | 'clinical';
 type Tab = 'lectures' | 'explanation' | 'summaries' | 'hints' | 'mcqs' | 'review';
-type Lecture = { id: string; title: string; pdf: string; pages: number };
+type Lecture = { id: string; title: string; pdf: string; pages: number; page?: number };
 type Topic = { id: string; title: string; en: string; count: number; duration: string; tag?: string; group?: string; lectures?: Lecture[] };
 type Subject = { id: string; title: string; english: string; accent: Accent; icon: string; description: string; topics: Record<Branch, Topic[]> };
 
@@ -31,6 +31,25 @@ const endocrinologyLectures: Lecture[] = [
   { id: 'lipid-abnormalities', title: 'Lipid Abnormalities', pdf: '/lectures/07-lipid-abnormalities.pdf', pages: 10 },
 ];
 
+const gastroenterologyLectures: Lecture[] = [
+  { id: 'gastro-lec-01', title: 'Lec 01: Anatomy & Physiology of the GI Tract', pdf: '/lectures/Gastroenterology/01-anatomy-physiology-gi-tract.pdf', pages: 7 },
+  { id: 'gastro-lec-02', title: 'Lec 02: Investigations of the GIT System', pdf: '/lectures/Gastroenterology/02-investigations-git-system.pdf', pages: 13 },
+  { id: 'gastro-lec-03', title: 'Lec 03: Disorders of the Esophagus (GERD & Achalasia)', pdf: '/lectures/Gastroenterology/03-esophagus-gerd-achalasia.pdf', pages: 13 },
+  { id: 'gastro-lec-04', title: 'Lec 04: Acute & Chronic Gastritis (H. pylori)', pdf: '/lectures/Gastroenterology/04-acute-chronic-gastritis-h-pylori.pdf', pages: 6 },
+  { id: 'gastro-lec-05', title: 'Lec 05: Malabsorption & Celiac Disease', pdf: '/lectures/Gastroenterology/05-malabsorption-celiac-disease.pdf', pages: 11 },
+  { id: 'gastro-lec-06', title: 'Lec 06: Small Bowel Diseases (SIBO & Whipple)', pdf: '/lectures/Gastroenterology/06-small-bowel-diseases-sibo-whipple.pdf', pages: 9 },
+  { id: 'gastro-lec-07', title: 'Lec 07: Irritable Bowel Syndrome (IBS)', pdf: '/lectures/Gastroenterology/07-irritable-bowel-syndrome-ibs.pdf', pages: 6 },
+  { id: 'gastro-lec-08', title: 'Lec 08: Peptic Ulcer Disease (PUD)', pdf: '/lectures/Gastroenterology/08-peptic-ulcer-disease-pud.pdf', pages: 6 },
+  { id: 'gastro-lec-09', title: 'Lec 09: PUD Complications, ZES & Dyspepsia', pdf: '/lectures/Gastroenterology/09-pud-complications-zes-dyspepsia.pdf', pages: 6 },
+  { id: 'gastro-lec-10', title: 'Lec 10: Esophageal & Gastric Tumors', pdf: '/lectures/Gastroenterology/10-esophageal-gastric-tumors.pdf', pages: 14 },
+  { id: 'gastro-lec-11', title: 'Lec 11: Inflammatory Bowel Disease (IBD - Part 1)', pdf: '/lectures/Gastroenterology/11-inflammatory-bowel-disease-part-1.pdf', pages: 14 },
+  { id: 'gastro-lec-12', title: 'Lec 12: Inflammatory Bowel Disease (IBD - Part 2)', pdf: '/lectures/Gastroenterology/12-inflammatory-bowel-disease-part-2.pdf', pages: 10 },
+  { id: 'gastro-lec-13', title: 'Lec 13: Colorectal Cancer & Polyps', pdf: '/lectures/Gastroenterology/13-colorectal-cancer-polyps.pdf', pages: 9 },
+  { id: 'gastro-lec-14', title: 'Lec 14: Acute Upper GIT Bleeding', pdf: '/lectures/Gastroenterology/14-acute-upper-git-bleeding.pdf', pages: 6 },
+  { id: 'gastro-lec-15', title: 'Lec 15: Pancreatic Diseases (Pancreatitis)', pdf: '/lectures/Gastroenterology/15-pancreatic-diseases-pancreatitis.pdf', pages: 14 },
+  { id: 'gastro-lec-16', title: 'Lec 16: Acute Infectious Diarrhoea', pdf: '/lectures/Gastroenterology/16-acute-infectious-diarrhoea.pdf', pages: 7 },
+];
+
 const endocrinologyTopic: Topic = {
   ...topic('endocrinology', 'Endocrinology', 'الغدد الصماء'),
   count: endocrinologyLectures.length,
@@ -38,10 +57,17 @@ const endocrinologyTopic: Topic = {
   lectures: endocrinologyLectures,
 };
 
+const gastroenterologyTopic: Topic = {
+  ...topic('gastroenterology', 'Gastroenterology', 'أمراض الجهاز الهضمي'),
+  count: gastroenterologyLectures.length,
+  duration: '16 lectures',
+  lectures: gastroenterologyLectures,
+};
+
 const internalMedicineTopics = [
   topic('cardiology', 'Cardiology', 'أمراض القلب'),
   topic('respiratory', 'Respiratory Medicine', 'الأمراض التنفسية'),
-  topic('gastroenterology', 'Gastroenterology', 'أمراض الجهاز الهضمي'),
+  gastroenterologyTopic,
   endocrinologyTopic,
   topic('nephrology', 'Nephrology', 'أمراض الكلى'),
   topic('infectious-diseases', 'Infectious Diseases', 'الأمراض الانتقالية'),
@@ -294,7 +320,7 @@ function Lectures({ topic, topicKey, completedIds, onComplete }: { topic: Topic;
         <span className="text-[10px] text-white/55">{selectedLecture?.title ?? topic.en}</span>
       </div>
       {selectedLecture ? <div>
-        <iframe title={selectedLecture.title} src={`${selectedLecture.pdf}#page=1&view=FitH`} className="h-[460px] w-full bg-white md:h-[540px]" data-testid="iframe-lecture-pdf" />
+        <iframe key={selectedLecture.id} title={selectedLecture.title} src={`${selectedLecture.pdf}#page=${selectedLecture.page ?? 1}`} className="h-[460px] w-full bg-white md:h-[540px]" data-testid="iframe-lecture-pdf" />
         <div className="flex flex-wrap gap-3 border-t border-white/10 p-4">
           <a href={selectedLecture.pdf} download data-testid="link-download-pdf" className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-[hsl(var(--sidebar-primary))] px-4 py-3 text-xs font-bold text-[hsl(var(--sidebar-primary-foreground))] transition hover:-translate-y-0.5 sm:flex-none"><Download size={16} /><span className="text-right"><span className="block">Download PDF</span><span className="mt-0.5 block text-[10px] opacity-70">تحميل المحاضرة</span></span></a>
           <button type="button" onClick={() => onComplete(selectedLecture.id)} aria-pressed={selectedCompleted} data-testid={`button-complete-lecture-${selectedLecture.id}`} className={`inline-flex flex-1 items-center justify-center gap-2 rounded-xl border px-4 py-3 text-xs font-bold transition sm:flex-none ${selectedCompleted ? 'border-[hsl(158_46%_35%)] bg-[hsl(158_46%_35%)] text-white' : 'border-white/20 bg-white/10 text-white hover:bg-white/15'}`}><Check size={16} /><span className="text-right"><span className="block">Mark as Completed</span><span className="mt-0.5 block text-[10px] opacity-70">{selectedCompleted ? 'تمت القراءة' : 'أكملت القراءة'}</span></span></button>
