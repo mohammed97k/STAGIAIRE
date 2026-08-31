@@ -9,6 +9,7 @@ import {
   ListFilter, PlayCircle, Printer, Search, Star, Stethoscope, Target, X,
 } from 'lucide-react';
 import { Link, Route, Switch, useLocation, useParams, Router as WouterRouter } from 'wouter';
+import { gitLecturesData, type LectureData } from '@/data/gitLectures';
 
 type Accent = 'navy' | 'green' | 'orange' | 'purple';
 type Branch = 'theory' | 'clinical';
@@ -550,7 +551,9 @@ function GastroLectures({ topic, topicKey, completedIds, onComplete }: { topic: 
 }
 
 function GastroReader({ lecture, index, total, completed, onComplete, onBack }: { lecture: Lecture; index: number; total: number; completed: boolean; onComplete: () => void; onBack: () => void }) {
-  const note = gastroNotes[lecture.id] ?? { kicker: 'Study note', summary: 'A focused reading page for this lecture.', objectives: [], boxes: [], takeaway: 'Return to the lecture list to continue.' };
+  const lectureNumber = Number(lecture.id.match(/\d+$/)?.[0] ?? 0);
+  const data: LectureData | undefined = gitLecturesData[lectureNumber];
+  if (!data) return <div role="alert" className="gastro-reader-error">Lecture content is unavailable for this entry.</div>;
   return <article className="gastro-reader" dir="ltr" data-testid="gastro-reader">
     <header className="gastro-reader-header">
       <div className="gastro-reader-brand">
@@ -558,7 +561,7 @@ function GastroReader({ lecture, index, total, completed, onComplete, onBack }: 
         <img src="/brand_text.png" alt="ستاجير - كل ما تحتاجه في الطب" className="gastro-reader-brand-text" />
         <span className="gastro-reader-brand-label">STUDY READER</span>
       </div>
-      <div className="gastro-reader-header-meta"><div className="gastro-reader-header-lecture"><span>GASTROENTEROLOGY</span><strong>{lecture.title}</strong></div><b>{String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}</b></div>
+      <div className="gastro-reader-header-meta"><div className="gastro-reader-header-lecture"><span>{data.system}</span><strong>{data.title}</strong></div><b>{String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}</b></div>
     </header>
     <div className="gastro-reader-toolbar gastro-no-print">
       <button type="button" onClick={onBack} className="gastro-reader-back"><ChevronLeft size={18} /> <span>Back to lecture list</span></button>
@@ -569,23 +572,21 @@ function GastroReader({ lecture, index, total, completed, onComplete, onBack }: 
     </div>
     <div className="gastro-reader-page">
       <div className="gastro-reader-main">
-        <div className="gastro-reader-kicker">{note.kicker}</div>
-        <h1>{lecture.title}</h1>
-        <p className="gastro-reader-lede">{note.summary}</p>
+        <div className="gastro-reader-kicker">STAGIAIRE · {data.system}</div>
+        <h1>{data.title}</h1>
+        <p className="gastro-reader-lede">Structured study notes for {data.system}, prepared for focused clinical review.</p>
+        <div className="gastro-reader-byline"><span>{data.doctor}</span><i /><span>{data.readTime} read</span><i /><span>{lecture.pages} source pages</span></div>
         <div className="gastro-reader-rule" />
-        <section className="gastro-reader-section">
-          <div className="gastro-section-heading"><span>01</span><div><small>ORIENTATION</small><h2>What to carry forward</h2></div></div>
-          <div className="gastro-objectives">{note.objectives.map((objective) => <p key={objective}><Check size={15} />{objective}</p>)}</div>
-        </section>
-        <section className="gastro-reader-section">
-          <div className="gastro-section-heading"><span>02</span><div><small>CORE NOTES</small><h2>Build the clinical picture</h2></div></div>
-          <div className="gastro-note-grid">{note.boxes.map((box) => <div key={box.label} className={`gastro-note-box ${box.tone ?? 'teal'}`}><div className="gastro-box-label">{box.label}</div><h3>{box.title}</h3><ul>{box.items.map((item) => <li key={item}>{item}</li>)}</ul></div>)}</div>
-        </section>
-        <section className="gastro-takeaway"><span>CLINICAL TAKEAWAY</span><p>{note.takeaway}</p></section>
+        {data.content.map((section, sectionIndex) => <section key={section.sectionTitle} className="gastro-reader-section">
+          <div className="gastro-section-heading"><span>{String(sectionIndex + 1).padStart(2, '0')}</span><div><small>LECTURE NOTES</small><h2>{section.sectionTitle}</h2></div></div>
+          {section.items && <ul className="gastro-reader-items">{section.items.map((item) => <li key={item}>{item}</li>)}</ul>}
+          {section.boxes && <div className="gastro-note-grid">{section.boxes.map((box) => <div key={box.subtitle} className="gastro-note-box"><div className="gastro-box-label">KEY POINT</div><h3>{box.subtitle}</h3><p className="gastro-box-details">{box.details}</p></div>)}</div>}
+          {section.callout && <aside className="gastro-reader-callout"><div><span>CLINICAL CALLOUT</span><h3>{section.callout.title}</h3></div><ul>{section.callout.points.map((point) => <li key={point}>{point}</li>)}</ul></aside>}
+        </section>)}
       </div>
       <aside className="gastro-reader-aside">
-        <div className="gastro-aside-card gastro-aside-index"><span className="gastro-overline">IN THIS READER</span><div className="gastro-aside-line is-active"><b>01</b><span>Orientation</span></div><div className="gastro-aside-line"><b>02</b><span>Core notes</span></div><div className="gastro-aside-line"><b>03</b><span>Clinical takeaway</span></div></div>
-        <div className="gastro-aside-card gastro-aside-meta"><span className="gastro-overline">LECTURE DETAILS</span><div><span>Sequence</span><b>{String(index + 1).padStart(2, '0')} of {total}</b></div><div><span>Source pages</span><b>{lecture.pages} pages</b></div><div><span>Format</span><b>HTML notes</b></div></div>
+        <div className="gastro-aside-card gastro-aside-index"><span className="gastro-overline">IN THIS READER</span>{data.content.map((section, sectionIndex) => <div key={section.sectionTitle} className={`gastro-aside-line ${sectionIndex === 0 ? 'is-active' : ''}`}><b>{String(sectionIndex + 1).padStart(2, '0')}</b><span>{section.sectionTitle}</span></div>)}</div>
+        <div className="gastro-aside-card gastro-aside-meta"><span className="gastro-overline">LECTURE DETAILS</span><div><span>Doctor</span><b>{data.doctor}</b></div><div><span>Read time</span><b>{data.readTime}</b></div><div><span>Sequence</span><b>{String(index + 1).padStart(2, '0')} of {total}</b></div><div><span>Format</span><b>HTML notes</b></div></div>
         <div className="gastro-aside-quote">“Small, clear passes beat one long, anxious read.”<span>— Stagiaire study desk</span></div>
       </aside>
     </div>
