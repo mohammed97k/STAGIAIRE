@@ -439,26 +439,30 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1.5rem;
-  min-height: 5.2rem;
-  padding: .7rem clamp(1rem, 4vw, 3rem);
+  gap: 1.25rem;
+  min-height: 0;
+  padding: 16px 20px;
   background: var(--gastro-ink);
   color: #F8F4EB;
+  direction: rtl;
 }
-.gastro-reader-brand { display: flex; align-items: center; gap: .7rem; }
+.gastro-reader-brand { display: flex; align-items: center; gap: .7rem; min-width: 0; direction: rtl; }
 .gastro-reader-logo {
-  width: 2.9rem;
-  height: 2.9rem;
+  width: 46px;
+  height: 46px;
   border: 2px solid rgba(248, 244, 235, .72);
   border-radius: .8rem;
   object-fit: cover;
 }
 .gastro-reader-brand-text {
-  width: 8.6rem;
-  height: 2.85rem;
-  padding: .2rem .45rem;
-  border-radius: .45rem;
-  background: #F8F4EB;
+  background: transparent !important;
+  mix-blend-mode: screen;
+  filter: invert(1) brightness(1.12) contrast(.92);
+  height: 38px;
+  width: auto;
+  max-width: 180px;
+  padding: 0;
+  border-radius: 0;
   object-fit: contain;
 }
 .gastro-reader-brand-label {
@@ -473,16 +477,20 @@
   display: flex;
   align-items: center;
   gap: 1.1rem;
+  flex: 1 1 auto;
+  min-width: 0;
   color: rgba(248, 244, 235, .62);
   font-family: var(--app-font-mono);
   font-size: .61rem;
   letter-spacing: .1em;
+  direction: rtl;
 }
 .gastro-reader-header-lecture {
   display: flex;
   flex-direction: column;
   gap: .18rem;
-  max-width: min(34rem, 48vw);
+  min-width: 0;
+  max-width: none;
   text-align: right;
 }
 .gastro-reader-header-lecture span {
@@ -492,6 +500,7 @@
   letter-spacing: .12em;
 }
 .gastro-reader-header-lecture strong {
+  display: block;
   overflow: hidden;
   color: #F8F4EB;
   font-family: var(--app-font-sans);
@@ -708,11 +717,15 @@
   .gastro-row-actions { gap: .25rem; }
   .gastro-row-arrow { display: none; }
   .gastro-reader { margin: -1rem -1.25rem 0; }
-  .gastro-reader-header { align-items: flex-start; flex-direction: column; gap: .7rem; padding: .8rem 1rem 1rem; }
+  .gastro-reader-header { align-items: center; flex-direction: row; gap: .65rem; padding: 16px 20px; }
+  .gastro-reader-brand { gap: .45rem; }
+  .gastro-reader-logo { width: 42px; height: 42px; }
+  .gastro-reader-brand-text { height: 38px; max-width: 110px; }
   .gastro-reader-brand-label { display: none; }
-  .gastro-reader-header-meta { width: 100%; justify-content: space-between; padding-left: 3.6rem; }
-  .gastro-reader-header-lecture { max-width: calc(100vw - 8rem); }
-  .gastro-reader-header-lecture strong { font-size: .72rem; }
+  .gastro-reader-header-meta { width: auto; gap: .55rem; justify-content: flex-start; }
+  .gastro-reader-header-lecture { flex: 1 1 auto; }
+  .gastro-reader-header-lecture strong { font-size: .68rem; }
+  .gastro-reader-header-meta b { flex: 0 0 auto; font-size: .56rem; }
   .gastro-reader-toolbar { align-items: stretch; flex-direction: column; padding: .65rem 1rem; }
   .gastro-reader-actions { width: 100%; }
   .gastro-print-button, .gastro-reader-complete { flex: 1; }
@@ -734,9 +747,9 @@
   .app-shell > header, .mobile-bottom-nav, .gastro-no-print { display: none !important; }
   .app-shell { padding-bottom: 0 !important; background: #FBFAF6 !important; }
   .gastro-reader { margin: 0; overflow: visible; background: #FBFAF6; }
-  .gastro-reader-header { min-height: 3.7rem; padding: 0 0 1rem; background: #0F2942; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .gastro-reader-logo { width: 2.25rem; height: 2.25rem; }
-  .gastro-reader-brand-text { height: 2.2rem; }
+  .gastro-reader-header { min-height: 0; padding: 16px 20px; background: #0F2942; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .gastro-reader-logo { width: 38px; height: 38px; }
+  .gastro-reader-brand-text { height: 38px; }
   .gastro-reader-page { display: block; max-width: none; padding: 1.4rem 0 0; }
   .gastro-reader-main { max-width: none; }
   .gastro-reader-main h1 { max-width: none; font-size: 26pt; }
